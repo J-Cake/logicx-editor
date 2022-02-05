@@ -3,22 +3,26 @@
     "version": "2.0.1",
     "type":"module",
     "scripts": {
-        "build:app": "esbuild ui/index.tsx --outfile=./build/editor.js --bundle --sourcemap --platform=browser",
-        "build:static": "mkdir -p ./build && ln -sfr ./static/* ./build",
-        "build:clean": "rm -rf ./build pnpm* .pnpm* package-lock.json yarn.lock node_nodules"
+        "build:app": "esbuild app/index.ts --outfile=./build/editor.js --bundle --sourcemap --platform=browser --format=esm --loader:.lpf=file",
+        "build:sandbox": "esbuild app/ext/sandbox/index.ts --outfile=./build/sandbox.js --bundle --sourcemap --platform=browser --format=esm --loader:.lpf=file",
+        "build:static": "mkdir -p ./build/lib/theme && ln -sfr ./static/* ./build",
+        "build:clean": "rm -rf ./build pnpm* .pnpm* package-lock.json yarn.lock node_nodules",
+        "build:theme-default": "ln -sfr ./src/themes/default.js ./build/lib/theme/default.js"
     },
     "dependencies": {
         "konva": "latest",
         "react-konva": "latest",
         "react": "latest",
         "react-dom": "latest",
-        "mousetrap": "latest"
+        "mousetrap": "latest",
+        "lodash": "latest"
     },
     "devDependencies": {
         "esbuild": "latest",
         "typescript": "latest",
         "@types/react": "latest",
         "@types/react-dom": "latest",
-        "@types/mousetrap": "latest"
+        "@types/mousetrap": "latest",
+        "@types/lodash": "latest"
     }
 }
