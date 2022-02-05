@@ -1,0 +1,17 @@
+{
+    "compilerOptions": {
+        "module": "esnext",
+        "target": "esnext",
+        "sourceMap": true,
+        "esModuleInterop": true,
+        "allowSyntheticDefaultImports": true,
+        "rootDirs": [
+            "ui"
+        ],
+        "jsx": "react-jsx",
+        "moduleResolution": "Node",
+        "outDir": "build/ts",
+        "declaration": true,
+        "declarationDir": "build/lib"
+    }
+}

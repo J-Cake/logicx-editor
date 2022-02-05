@@ -1,0 +1,8 @@
+#interface {
+    display: grid;
+    width: 100vw;
+    height: 100vh;
+
+    grid-template-rows: var(--toolbar-height) 1fr var(--status-bar-height);
+    grid-template-columns: var(--toolbar-width) var(--panel-width) 1fr var(--panel-width) var(--toolbar-width);
+}

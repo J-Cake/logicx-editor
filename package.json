@@ -1,0 +1,24 @@
+{
+    "name": "logicx-editor",
+    "version": "2.0.1",
+    "type":"module",
+    "scripts": {
+        "build:app": "esbuild ui/index.tsx --outfile=./build/editor.js --bundle --sourcemap --platform=browser",
+        "build:static": "mkdir -p ./build && ln -sfr ./static/* ./build",
+        "build:clean": "rm -rf ./build pnpm* .pnpm* package-lock.json yarn.lock node_nodules"
+    },
+    "dependencies": {
+        "konva": "latest",
+        "react-konva": "latest",
+        "react": "latest",
+        "react-dom": "latest",
+        "mousetrap": "latest"
+    },
+    "devDependencies": {
+        "esbuild": "latest",
+        "typescript": "latest",
+        "@types/react": "latest",
+        "@types/react-dom": "latest",
+        "@types/mousetrap": "latest"
+    }
+}
