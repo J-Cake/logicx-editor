@@ -8,23 +8,23 @@ export class TabView extends React.Component<{ title: string }> {
     }
 }
 
-export class TabContainer extends React.Component<{ activeTab: number, children?: TabView[], class: string[] }, { activeTab: number }> {
+export class TabContainer extends React.Component<{ activeTab: number, children?: React.ReactElement<{ title: string }>[], class?: string[], onChange: (index: number) => void, group: string }> {
     constructor(props) {
         super(props);
-
-        this.state = {
-            activeTab: this.props.activeTab
-        };
     }
 
     render() {
         return <div className={`tab-container ${this.props.class.join(' ')}`}>
-            TabView
             <div className="tab-header">
-                {this.props.children?.map(i => <div className="tab logicx-widget">{i.props.title}</div>)}
+                {this.props.children?.map((i, a) => <div className="tab logicx-widget" key={`tab-${i.props.title}`}>
+                    <label>
+                        <input type="radio" name={this.props.group} onChange={() => this.props.onChange(a)} checked={a === this.props.activeTab}/>
+                        {i.props.title}
+                    </label>
+                </div>)}
             </div>
             <div className="tab-body">
-                {this.props.children?.[this.state.activeTab]}
+                {this.props.children?.[this.props.activeTab]}
             </div>
         </div>;
     }

@@ -13,7 +13,3 @@ body {
     color: var(--theme-font-colour);
     font: var(--theme-font-size) var(--theme-font-family);
 }
-
-.panel {
-    background: var(--theme-primary);
-}

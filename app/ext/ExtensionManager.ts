@@ -1,10 +1,14 @@
+import StateManager from "../stateManager";
 import Extension from "./Extension";
 
 export default class ExtensionManager {
     private readonly extensions: { [Name in string]: Extension };
 
+    public readonly sharedState: Map<keyof ExtensionManager['extensions'], StateManager<any>>;
+
     constructor() {
         this.extensions = {};
+        this.sharedState = new Map();
     }
 
     get(name: string): Extension {
@@ -18,6 +22,8 @@ export default class ExtensionManager {
                 throw `Extension ${name} already exists`;
 
             const ext = this.extensions[name] = new Extension(name, onLoad);
+            this.sharedState.set(name, new StateManager({}));
+
             onLoad(ext);
         }.bind(this));
     }

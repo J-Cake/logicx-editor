@@ -21,4 +21,4 @@ extension("Default", function (extension) {
         },
         margin: "2px"
     });
-})
+});

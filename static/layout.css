@@ -24,6 +24,6 @@
     grid-area: statusbar;
 }
 
-.toolbar.top { grid-area: toolbar-top; }
-.toolbar.left { grid-area: toolbar-left; }
-.toolbar.right { grid-area: toolbar-right; }
+.toolbar.top { grid-area: toolbar-top; overflow: hidden; }
+.toolbar.left { grid-area: toolbar-left; overflow: hidden; }
+.toolbar.right { grid-area: toolbar-right; overflow: hidden; }

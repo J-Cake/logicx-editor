@@ -3,11 +3,13 @@
     "version": "2.0.1",
     "type":"module",
     "scripts": {
-        "build:app": "esbuild app/index.ts --outfile=./build/editor.js --bundle --sourcemap --platform=browser --format=esm --loader:.lpf=file",
-        "build:sandbox": "esbuild app/ext/sandbox/index.ts --outfile=./build/sandbox.js --bundle --sourcemap --platform=browser --format=esm --loader:.lpf=file",
-        "build:static": "mkdir -p ./build/lib/theme && ln -sfr ./static/* ./build",
+        "app:app": "esbuild app/index.ts --outfile=./build/editor.js --bundle --sourcemap --platform=browser --format=esm --loader:.lpf=file",
+        
+        "build:static": "mkdir -p ./build/ext/theme && ln -sfr ./static/* ./build",
         "build:clean": "rm -rf ./build pnpm* .pnpm* package-lock.json yarn.lock node_nodules",
-        "build:theme-default": "ln -sfr ./src/themes/default.js ./build/lib/theme/default.js"
+
+        "ext:theme-default": "ln -sfr ./src/themes/default.js ./build/ext/theme/default.js",
+        "ext:document": "esbuild src/document/ext.js --outfile=./build/ext/document.js --bundle --sourcemap --platform=browser --format=esm --loader:.lpf=file"
     },
     "dependencies": {
         "konva": "latest",

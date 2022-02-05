@@ -10,6 +10,7 @@ import StateManager from './stateManager';
 import defaultPreferences from './default.lpf';
 import app from '../ui/';
 import ViewportManager from './ext/ViewportManager';
+import LogicXDocument from './Document';
 
 export interface GlobalState {
     actions: ActionManager,
@@ -17,13 +18,16 @@ export interface GlobalState {
     themes: ThemeManager,
     preferences: PreferenceManager<GlobalPreferences>
     viewport: ViewportManager,
+
+    document: LogicXDocument
 }
 
 export const GlobalState = new StateManager<GlobalState>({
     actions: new ActionManager(),
     preferences: await PreferenceManager.load(defaultPreferences),
     themes: new ThemeManager(),
-    viewport: new ViewportManager()
+    viewport: new ViewportManager(),
+    document: new LogicXDocument('<anonymous>', '')
 });
 
 const state = await GlobalState.setStateAsync(async prev => ({ extensions: await ExtensionManager.loadExtensions(prev.preferences.get('extensions')) }));
@@ -31,5 +35,3 @@ const state = await GlobalState.setStateAsync(async prev => ({ extensions: await
 state.themes.switchTheme(state.preferences.get('theme'));
 
 setTimeout(() => app($("section#root")[0]), 0);
-
-export default state;
