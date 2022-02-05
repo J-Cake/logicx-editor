@@ -22,6 +22,10 @@ export default class StateManager<State extends {}> {
             handler(this.globState);
     }
 
+    get(): State {
+        return this.globState;
+    }
+
     setState(state?: Partial<State> | ((prev: State) => Partial<State>)): State {
         const _state: Partial<State> | undefined = state instanceof Function ? state(this.globState) : state;
 

@@ -1,4 +1,19 @@
 :root, body {
     margin: 0;
     padding: 0;
+
+    --statusbar-size: 24px;
+    --toolbar-size: 48px;
+    --panel-left-size: 365px;
+    --panel-right-size: 256px;
+}
+
+body {
+    background: var(--theme-background);
+    color: var(--theme-font-colour);
+    font: var(--theme-font-size) var(--theme-font-family);
+}
+
+.panel {
+    background: var(--theme-primary);
 }

@@ -1,0 +1,5 @@
+{
+    "theme": "default",
+    "extensions": ["/lib/theme/default.js"],
+    "language": "en_au"
+}

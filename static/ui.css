@@ -1,0 +1,31 @@
+/*
+This file is responsible only for theme-adjustable properties
+Any styles defined here are controlled by theme values.
+*/
+
+/* common */
+.logicx-widget {
+    display: block;
+    position: relative;
+    
+    font: var(--theme-font-size) var(--theme-font-family);
+    margin: var(--theme-margin);
+
+    background: var(--theme-primary);
+    border: var(--theme-border-weight) solid var(--theme-border-colour);
+    border-radius: var(--theme-border-radius);
+}
+
+.button {}
+
+.checkbox {
+    background: var(--background);
+    padding: var(--theme-margin);
+}
+.checkbox .checkbox-inner {}
+
+.radio {}
+.radio .radio-inner {}
+
+.single-line {}
+.multi-line {}

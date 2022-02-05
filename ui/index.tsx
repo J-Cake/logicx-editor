@@ -3,6 +3,8 @@ import dom from 'react-dom';
 
 import Interface from './app/Interface';
 
-const App = (props: {}) => <Interface documentId={window.location.pathname.split('/').pop()}/>;
+export default function app(root: HTMLElement) {
+    const App = (props: {}) => <Interface documentId={window.location.pathname.split('/').pop()} />;
 
-dom.render(<App/>, document.querySelector("section#root"));
+    dom.render(<App />, root);
+}
