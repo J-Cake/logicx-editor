@@ -1,6 +1,6 @@
 import StateBlock from "markdown-it/lib/rules_block/state_block";
 import React from "react";
-import { GlobalState as state } from "../../app";
+import { StateMgr as StateMgr } from "../../app";
 
 export interface ViewportProps {
 
@@ -8,13 +8,13 @@ export interface ViewportProps {
 
 export default class Viewport extends React.Component<ViewportProps> {
     render() {
-        if (state.get().viewport.get().viewport)
+        if (StateMgr.get().viewport.get().viewport)
             return <section id="viewport">
-                {state.get().viewport.get().viewport()}
+                {StateMgr.get().viewport.get().viewport()}
             </section>;
 
             return <section id="viewport">
-                Editing {state.get().document.name}
+                Editing {StateMgr.get().document.name}
             </section>
     }
 }

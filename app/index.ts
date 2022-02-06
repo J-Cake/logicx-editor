@@ -22,7 +22,7 @@ export interface GlobalState {
     document: LogicXDocument
 }
 
-export const GlobalState = new StateManager<GlobalState>({
+export const StateMgr = new StateManager<GlobalState>({
     actions: new ActionManager(),
     preferences: await PreferenceManager.load(defaultPreferences),
     themes: new ThemeManager(),
@@ -30,7 +30,7 @@ export const GlobalState = new StateManager<GlobalState>({
     document: new LogicXDocument('<anonymous>', '')
 });
 
-const state = await GlobalState.setStateAsync(async prev => ({ extensions: await ExtensionManager.loadExtensions(prev.preferences.get('extensions')) }));
+const state = await StateMgr.setStateAsync(async prev => ({ extensions: await ExtensionManager.loadExtensions(prev.preferences.get('extensions')) }));
 
 state.themes.switchTheme(state.preferences.get('theme'));
 

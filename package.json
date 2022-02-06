@@ -9,7 +9,8 @@
         "build:clean": "rm -rf ./build pnpm* .pnpm* package-lock.json yarn.lock node_nodules",
 
         "ext:theme-default": "ln -sfr ./src/themes/default.js ./build/ext/theme/default.js",
-        "ext:document": "esbuild src/document/ext.js --outfile=./build/ext/document.js --bundle --sourcemap --platform=browser --format=esm --loader:.lpf=file"
+        "ext:document": "esbuild src/document/ext.js --outfile=./build/ext/document.js --bundle --sourcemap --platform=browser --format=esm --loader:.lpf=file",
+        "ext:test": "esbuild src/viewport/test/ext.jsx --outfile=./build/ext/test.js --bundle --sourcemap --platform=browser --format=esm --loader:.lpf=file"
     },
     "dependencies": {
         "konva": "latest",

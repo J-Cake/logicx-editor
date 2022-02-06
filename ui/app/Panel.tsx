@@ -1,5 +1,5 @@
 import React from 'react';
-import { GlobalState } from '../../app';
+import { StateMgr } from '../../app';
 
 import * as Tab from '../components/tab';
 
@@ -11,7 +11,7 @@ export default class Panel extends React.Component<{ children?: React.ReactEleme
             activeTab: this.props.activeTab
         };
 
-        GlobalState.get().viewport.onStateChange(state => this.props.position === 'left' ? this.setState({ activeTab: state.left_focus }) : this.setState({ activeTab: state.right_focus }));
+        StateMgr.get().viewport.onStateChange(state => this.props.position === 'left' ? this.setState({ activeTab: state.left_focus }) : this.setState({ activeTab: state.right_focus }));
     }
 
     render() {

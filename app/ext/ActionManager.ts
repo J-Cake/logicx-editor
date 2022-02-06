@@ -1,42 +1,73 @@
 import _ from "lodash";
 
-import { GlobalState, GlobalState as state } from "..";
+export class ActionNamespace {
 
-export type Condition = keyof ActionManager['conditions']; // The condition be will represent a list of values which define state-dependent values
+    private readonly actions: { name: string, enabled: boolean, action: () => void }[];
+    private children: { [name in string]: ActionNamespace };
+
+    constructor(public readonly name: string, private readonly parent?: ActionNamespace) {
+        this.actions = [];
+        this.children = {};
+
+        if (parent && name in parent.children)
+            throw 'Action namespace already exists';
+        else if (parent)
+            parent.children[name] = this;
+    }
+
+    register(name: string, action: () => void): (enabled: boolean) => void {
+        if (name.includes('.'))
+            throw `Action name cannot contain '.'`;
+
+        const actionObject = { name, enabled: true, action };
+        this.actions.push(actionObject);
+
+        return enabled => actionObject.enabled = enabled;
+    }
+
+    fork(name: string): ActionNamespace {
+        return new ActionNamespace(name, this);
+    }
+
+    invoke(name: string) {
+        const search = name.split('.');
+
+        if (search.length === 1)
+            if (name in this.actions) {
+                if (this.actions[name].enabled)
+                    this.actions[name].action();
+            } else throw `Action '${name}' does not exist`;
+        else
+            if (search[0] in this.children)
+                this.children[search[0]].invoke(search.slice(1).join('.'));
+            else
+                throw `Action namespace '${search[0]}' does not exist`;
+    }
+}
 
 export default class ActionManager {
 
-    private readonly actions: Map<string, Partial<{ [K in Condition]: () => void | Promise<void> }>> = new Map();
+    private readonly namespaces: { [namespace in string]: ActionNamespace };
     private queue: [job: Promise<any>, label: string][];
 
-    readonly conditions: { [K in string]: (state: GlobalState) => boolean };
-
     constructor() {
-        this.conditions = { always: () => true, never: () => false };
+        this.namespaces = {}
+        this.queue = [];
     }
 
-    conditionIsMet(condition: Condition): boolean {
-        return this.conditions[condition](GlobalState.setState());
-    }
+    // TODO: Define some sort of conditional system
 
-    registerAction(name: string, condition: Condition, action: () => void) {
-        if (this.actions.has(name)[condition])
-            throw new Error(`Action ${name} already exists`);
-
-        const entry = this.actions.get(name) ?? {};
-        this.actions.set(name, _.merge(entry, { [condition]: action }));
+    pushNamespace(name: string): ActionNamespace {
+        if (!name.includes('.'))
+            return this.namespaces[name] = new ActionNamespace(name);
+        else
+            throw `Namespace name cannot contain '.'`;
     }
 
     invokeAction(name: string) {
-        const action = this.actions.get(name);
 
-        for (const i in action)
-            if (this.conditionIsMet(i)) {
-                const job = action[i]();
+        const search = name.split('.');
 
-                if (job instanceof Promise)
-                    this.queue.push([job.then(() => this.queue.splice(this.queue.findIndex(i => i[0] === job), 1)), name]);
-            }
-
+        this.namespaces[search[0]].invoke(search.slice(1).join('.'));
     }
 }

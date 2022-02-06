@@ -1,41 +1,35 @@
-import { GlobalState, GlobalState as state } from "..";
+import { StateMgr as StateMgr } from "..";
 import StateManager from "../stateManager";
-import { Condition } from "./ActionManager";
+import { ActionNamespace } from "./ActionManager";
 import { Theme } from "./ThemeManager";
 
 // Class which sanitises functions and prepares them to be called from within extensions
-export default class Extension {
-    constructor(public readonly name: string, private readonly onLoad: (extension: Extension) => void) {
+export default class Extension<T = any> {
+    private actionNamespace: ActionNamespace;
 
+    constructor(public readonly name: string, private readonly onLoad: (extension: Extension<T>) => void) {
+        this.actionNamespace = StateMgr.get().actions.pushNamespace(name);
     }
 
-    getStorage<T>(): StateManager<T> {
-        return state.get().extensions.sharedState.get(this.name) as StateManager<T>;
+    storage(): StateManager<T> {
+        return StateMgr.get().extensions.sharedState.get(this.name) as StateManager<T>;
     }
 
-    registerAction(name: string, condition: Condition, action: () => void) {
-        state.get().actions.registerAction(name, condition, action);
+    actions(): ActionNamespace {
+        return this.actionNamespace;
     }
 
-    invokeAction(name: string) {
-        state.get().actions.invokeAction(name);
+    theme(name: string, theme: Theme) {
+        StateMgr.get().themes.pushTheme(theme, name);
     }
 
-    defineCondition(name: string, condition: (state: GlobalState) => boolean) {
-        if (name in state.get().actions.conditions)
-            throw 'Condition already exists';
-        state.get().actions.conditions[name] = condition;
+    viewport(viewport: () => JSX.Element) {
+        if (typeof viewport === 'function')
+            StateMgr.get().viewport.setState({ viewport: viewport });
+        else throw `Expected viewport to be a function`;
     }
 
-    registerTheme(name: string, theme: Theme) {
-        state.get().themes.pushTheme(theme, name);
-    }
-
-    setViewport(viewport: () => JSX.Element) {
-        state.get().viewport.setState({ viewport: viewport });
-    }
-
-    registerPanel(panel: { label: string, icon?: string }, content: () => JSX.Element) {
-        return state.get().viewport.addPanelItem(panel, content);
+    panel(panel: { label: string, icon?: string }, content: () => JSX.Element) {
+        return StateMgr.get().viewport.addPanelItem(panel, content);
     }
 }

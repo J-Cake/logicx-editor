@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import { GlobalState } from '..';
+import { StateMgr } from '..';
 
 export type Colour = [r: number, g: number, b: number, a?: number] & { toString: () => string };
 export const colour = (r: number, g: number, b: number, a?: number): Colour => Object.defineProperty([r, g, b, a] as Colour, 'toString', () => `rgba(${r}, ${g}, ${b}, ${a ?? 1})`);

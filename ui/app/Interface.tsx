@@ -6,7 +6,7 @@ import ToolBar from "./ToolBar";
 import Viewport from "./Viewport";
 
 import * as Tab from '../components/tab';
-import { GlobalState } from "../../app";
+import { StateMgr } from "../../app";
 
 export default class Interface extends React.Component<{ documentId: string }> {
 
@@ -17,7 +17,7 @@ export default class Interface extends React.Component<{ documentId: string }> {
     }
 
     render() {
-        const { left, right, left_focus, right_focus } = GlobalState.get().viewport.get();
+        const { left, right, left_focus, right_focus } = StateMgr.get().viewport.get();
 
         return <section id="interface">
             <ToolBar actions={[]} position="top" />
