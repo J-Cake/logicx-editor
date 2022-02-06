@@ -2,6 +2,7 @@ import { StateMgr as StateMgr } from "..";
 import StateManager from "../stateManager";
 import { ActionNamespace } from "./ActionManager";
 import { Theme } from "./ThemeManager";
+import { PanelHandle } from "./ViewportManager";
 
 // Class which sanitises functions and prepares them to be called from within extensions
 export default class Extension<T = any> {
@@ -19,6 +20,10 @@ export default class Extension<T = any> {
         return this.actionNamespace;
     }
 
+    invoke(name: string) {
+        StateMgr.get().actions.invokeAction(name);
+    }
+
     theme(name: string, theme: Theme) {
         StateMgr.get().themes.pushTheme(theme, name);
     }
@@ -29,7 +34,7 @@ export default class Extension<T = any> {
         else throw `Expected viewport to be a function`;
     }
 
-    panel(panel: { label: string, icon?: string }, content: () => JSX.Element) {
+    panel(panel: { label: string, icon?: string }, content: (panel: PanelHandle) => JSX.Element): PanelHandle {
         return StateMgr.get().viewport.addPanelItem(panel, content);
     }
 }

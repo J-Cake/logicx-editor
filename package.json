@@ -10,6 +10,7 @@
 
         "ext:theme-default": "ln -sfr ./src/themes/default.js ./build/ext/theme/default.js",
         "ext:document": "esbuild src/document/ext.js --outfile=./build/ext/document.js --bundle --sourcemap --platform=browser --format=esm --loader:.lpf=file",
+        "ext:find-action": "esbuild src/ui/find-action.jsx --outfile=./build/ext/find-action.js --bundle --sourcemap --platform=browser --format=esm --loader:.lpf=file",
         "ext:test": "esbuild src/viewport/test/ext.jsx --outfile=./build/ext/test.js --bundle --sourcemap --platform=browser --format=esm --loader:.lpf=file"
     },
     "dependencies": {

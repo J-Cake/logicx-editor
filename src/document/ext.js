@@ -1,5 +1,5 @@
-extension("document", function (extension) {
-    extension.registerAction('save', 'always', function() {
-        
+extension('document', function (extension) {
+    extension.actions().register('save', function() {
+        console.log('Saving');
     });
 });

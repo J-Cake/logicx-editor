@@ -1,12 +1,26 @@
 import _ from "lodash";
 
+import { StateMgr } from "..";
+import { ActionItem } from "./ViewportManager";
+
+export type ActionTree = {
+    [namespace in string]: {
+        actions: Record<keyof ActionNamespace['actions'], ActionItem>,
+        namespaces: ActionTree
+    }
+};
+
 export class ActionNamespace {
 
-    private readonly actions: { name: string, enabled: boolean, action: () => void }[];
+    private readonly actions: { [name in string]: ActionItem & { action: () => void } };
     private children: { [name in string]: ActionNamespace };
 
+    listAll(): ActionTree {
+        return StateMgr.get().actions.list();
+    }
+
     constructor(public readonly name: string, private readonly parent?: ActionNamespace) {
-        this.actions = [];
+        this.actions = {};
         this.children = {};
 
         if (parent && name in parent.children)
@@ -15,12 +29,16 @@ export class ActionNamespace {
             parent.children[name] = this;
     }
 
-    register(name: string, action: () => void): (enabled: boolean) => void {
+    getName(name: string): string {
+        return this.parent ? this.parent.getName(`${this.name}.${name}`) : `${this.name}.${name}`;
+    }
+
+    register(name: string, action: () => void, friendly?: string): (enabled: boolean) => void {
         if (name.includes('.'))
             throw `Action name cannot contain '.'`;
 
-        const actionObject = { name, enabled: true, action };
-        this.actions.push(actionObject);
+        const actionObject = { name: this.getName(name), enabled: true, action, friendly };
+        this.actions[name] = actionObject;
 
         return enabled => actionObject.enabled = enabled;
     }
@@ -42,6 +60,34 @@ export class ActionNamespace {
                 this.children[search[0]].invoke(search.slice(1).join('.'));
             else
                 throw `Action namespace '${search[0]}' does not exist`;
+    }
+
+    details(name: string): ActionItem {
+        const search = name.split('.');
+
+        if (search.length === 1)
+            if (name in this.actions) {
+                if (this.actions[name].enabled)
+                    return this.actions[name];
+            } else throw `Action '${name}' does not exist`;
+        else
+            if (search[0] in this.children)
+                return this.children[search[0]].details(search.slice(1).join('.'));
+            else
+                throw `Action namespace '${search[0]}' does not exist`;
+    }
+
+    list(): ActionTree[string] {
+        return {
+            actions: _.mapValues(this.actions, i => ({
+                name: i.name,
+                friendly: i.friendly,
+                icon: i.icon,
+                enabled: i.enabled,
+                shortcut: i.shortcut,
+            })),
+            namespaces: _.mapValues(this.children, i => i.list())
+        }
     }
 }
 
@@ -65,9 +111,29 @@ export default class ActionManager {
     }
 
     invokeAction(name: string) {
-
         const search = name.split('.');
 
-        this.namespaces[search[0]].invoke(search.slice(1).join('.'));
+        if (search[0] in this.namespaces)
+            this.namespaces[search[0]].invoke(search.slice(1).join('.'));
+
+        else throw `Action namespace '${search[0]}' does not exist`;
+    }
+
+    details(name: string): ActionItem {
+        const search = name.split('.');
+
+        if (search[0] in this.namespaces)
+            return this.namespaces[search[0]].details(search.slice(1).join('.'));
+
+        else throw `Action namespace '${search[0]}' does not exist`;
+    }
+
+    list(): ActionTree {
+        const tree: ActionTree = {};
+
+        for (const namespace in this.namespaces)
+            tree[namespace] = this.namespaces[namespace].list();
+
+        return tree;
     }
 }

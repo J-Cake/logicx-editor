@@ -34,4 +34,12 @@ const state = await StateMgr.setStateAsync(async prev => ({ extensions: await Ex
 
 state.themes.switchTheme(state.preferences.get('theme'));
 
+const { actions, viewport } = StateMgr.get();
+viewport.setState({
+    LeftToolbar: StateMgr.get().preferences.get("toolbarLeft").map(i => actions.details(i)),
+    RightToolbar: StateMgr.get().preferences.get("toolbarRight").map(i => actions.details(i)),
+    TopToolbar: StateMgr.get().preferences.get("toolbarTop").map(i => actions.details(i)),
+});
+
+
 setTimeout(() => app($("section#root")[0]), 0);

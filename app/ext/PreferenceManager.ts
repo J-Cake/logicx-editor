@@ -4,6 +4,9 @@ export interface GlobalPreferences {
     extensions: string[],
     theme: keyof ThemeMananger['themes'][string],
     language: string,
+    toolbarLeft: string[],
+    toolbarRight: string[],
+    toolbarTop: string[],
 }
 
 export default class PreferenceManager<Preferences extends { [Pref in string]: any }> {

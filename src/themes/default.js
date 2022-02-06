@@ -1,5 +1,5 @@
 extension("Default", function (extension) {
-    extension.registerTheme('default', {
+    extension.theme('default', {
         colours: {
             primary: ["#00bcd4", "#009688"],
             secondary: ["#f44336", "#e91e63"],

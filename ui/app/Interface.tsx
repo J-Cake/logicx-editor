@@ -14,19 +14,21 @@ export default class Interface extends React.Component<{ documentId: string }> {
         super(props);
 
         const extensions = JSON.parse(window.localStorage.getItem("extensions"));
+        StateMgr.get().viewport.on('panel-move', () => this.forceUpdate());
+        StateMgr.get().viewport.on('toolbar-update', () => this.forceUpdate());
     }
 
     render() {
-        const { left, right, left_focus, right_focus } = StateMgr.get().viewport.get();
+        const { left, right, left_focus, right_focus, TopToolbar, LeftToolbar, RightToolbar } = StateMgr.get().viewport.get();
 
         return <section id="interface">
-            <ToolBar actions={[]} position="top" />
+            <ToolBar actions={TopToolbar} position="top" />
 
-            <ToolBar actions={[]} position="left" />
-            <Panel activeTab={left_focus} position="left">{left.map(i => <Tab.TabView title={i.display} key={`panel-left-${i.display}`}>{i.content()}</Tab.TabView>)}</Panel>
+            <ToolBar actions={LeftToolbar} position="left" />
+            <Panel activeTab={left_focus} position="left">{left.map(i => <Tab.TabView title={i.display} key={`panel-left-${i.display}`}>{i.content(i.handle())}</Tab.TabView>)}</Panel>
             <Viewport />
-            <Panel activeTab={right_focus} position="right">{right.map(i => <Tab.TabView title={i.display} key={`panel-right-${i.display}`}>{i.content()}</Tab.TabView>)}</Panel>
-            <ToolBar actions={[]} position="right" />
+            <Panel activeTab={right_focus} position="right">{right.map(i => <Tab.TabView title={i.display} key={`panel-right-${i.display}`}>{i.content(i.handle())}</Tab.TabView>)}</Panel>
+            <ToolBar actions={RightToolbar} position="right" />
 
             <StatusBar />
         </section>;
