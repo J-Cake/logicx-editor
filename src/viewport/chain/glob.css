@@ -1,0 +1,4 @@
+text {
+    font: var(--theme-font-size) var(--theme-font-family);
+    fill: var(--theme-foreground);
+}

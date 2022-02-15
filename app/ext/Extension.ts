@@ -61,7 +61,7 @@ export default function Extension<T = any>(name: string, onLoad: (extension: Ext
     function parse(colourValue: string | [string, string]): Colour | [Colour, Colour] {
         const parseColour = function (colourValue: string): Colour {
             if (colourValue.startsWith('#') && (colourValue.length === 7 || colourValue.length === 9))
-                return colour(...colourValue.slice(1).split(/.{2}/).map(i => Number(i)) as [number, number, number, number?]);
+                return colour(...colourValue.slice(1).split(/(..)/).filter(i => i).map(i => parseInt(i, 16)) as [number, number, number, number?]);
             else
                 throw `Invalid Colour Format: Expected rgb (#rrggbb) or rgba (#rrggbbaa)`;
         };
