@@ -1,40 +1,105 @@
-import { StateMgr as StateMgr } from "..";
+import { GlobalState, StateMgr as StateMgr } from "..";
 import StateManager from "../stateManager";
 import { ActionNamespace } from "./ActionManager";
-import { Theme } from "./ThemeManager";
-import { PanelHandle } from "./ViewportManager";
+import ThemeMananger, { Colour, colour } from "./ThemeManager";
+import ViewportManager from "./ViewportManager";
 
-// Class which sanitises functions and prepares them to be called from within extensions
-export default class Extension<T = any> {
-    private actionNamespace: ActionNamespace;
+export interface ExtensionAPI<K extends Record<string, any>> {
+    expose<T extends K[string]>(name: string, object: T): T,
+    getSymbol<T extends K[string]>(name: string): T | null,
 
-    constructor(public readonly name: string, private readonly onLoad: (extension: Extension<T>) => void) {
-        this.actionNamespace = StateMgr.get().actions.pushNamespace(name);
+    require<T>(symbol: string): T,
+}
+
+export function extensionAPI<K extends Record<string, any>>(): ExtensionAPI<K> {
+    const objects: Map<keyof K, any> = new Map();
+    return {
+        expose<Name extends keyof K>(name: Name, object: K[Name]): typeof object {
+            if (!(name as string).includes('.')) {
+                objects.set(name, object);
+                return object;
+            } else throw `Extension APIs cannot expose object with a dot in its name`;
+        },
+        getSymbol: <Name extends keyof K>(name: Name): K[Name] => objects.has(name) ? objects.get(name) : null,
+        require: <T>(symbol: string): T => StateMgr.get().extensions.findAPISymbol(symbol)
+    }
+}
+
+export interface Extension<T = any> {
+    action: {
+        invoke(name: string),
+        getNamespace(): ActionNamespace,
+        register: ActionNamespace['register'],
+        fork: ActionNamespace['fork'],
+        listAll: ActionNamespace['listAll']
+    },
+
+    ui: {
+        viewport(viewport: (parent: JQuery) => JSX.Element),
+        panel: ViewportManager['addPanelItem'],
+        theme: ThemeMananger['pushTheme']
+    },
+
+    util: {
+        colour(colour: string | [string, string]): Colour | [Colour, Colour]
     }
 
-    storage(): StateManager<T> {
-        return StateMgr.get().extensions.sharedState.get(this.name) as StateManager<T>;
-    }
+    storage: () => StateManager<T>,
+    api: <K extends Record<string, any>>() => ExtensionAPI<K>,
 
-    actions(): ActionNamespace {
-        return this.actionNamespace;
-    }
+    currentTheme: <T>(path: string) => T
+}
 
-    invoke(name: string) {
-        StateMgr.get().actions.invokeAction(name);
-    }
+export default function Extension<T = any>(name: string, onLoad: (extension: Extension<T>) => void): Extension<T> {
+    const state = StateMgr.get();
+    const actionNamespace: ActionNamespace = state.actions.pushNamespace(name);
+    const api = extensionAPI();
+    const storage = () => state.extensions.sharedState.get(name);
 
-    theme(name: string, theme: Theme) {
-        StateMgr.get().themes.pushTheme(theme, name);
-    }
+    function parse(colourValue: string): Colour;
+    function parse(colourValue: [string, string]): [Colour, Colour];
+    function parse(colourValue: string | [string, string]): Colour | [Colour, Colour] {
+        const parseColour = function (colourValue: string): Colour {
+            if (colourValue.startsWith('#') && (colourValue.length === 7 || colourValue.length === 9))
+                return colour(...colourValue.slice(1).split(/.{2}/).map(i => Number(i)) as [number, number, number, number?]);
+            else
+                throw `Invalid Colour Format: Expected rgb (#rrggbb) or rgba (#rrggbbaa)`;
+        };
 
-    viewport(viewport: () => JSX.Element) {
-        if (typeof viewport === 'function')
-            StateMgr.get().viewport.setState({ viewport: viewport });
-        else throw `Expected viewport to be a function`;
-    }
+        if (typeof colourValue === 'string') {
+            return parseColour(colourValue);
+        } else {
+            return [parseColour(colourValue[0]), parseColour(colourValue[1])];
+        }
+    };
 
-    panel(panel: { label: string, icon?: string }, content: (panel: PanelHandle) => JSX.Element): PanelHandle {
-        return StateMgr.get().viewport.addPanelItem(panel, content);
-    }
+    return {
+        action: {
+            invoke: name => state.actions.invokeAction(name),
+            getNamespace: () => actionNamespace,
+            register: actionNamespace.register.bind(actionNamespace),
+            fork: actionNamespace.fork.bind(actionNamespace),
+            listAll: actionNamespace.listAll.bind(actionNamespace)
+        },
+
+        ui: {
+            viewport(viewport: (parent: JQuery) => JSX.Element) {
+                if (typeof viewport === 'function')
+                    state.viewport.setState({ viewport: viewport });
+                else throw `Expected viewport to be a function`;
+            },
+            panel: state.viewport.addPanelItem.bind(state.viewport),
+            theme: state.themes.pushTheme.bind(state.themes)
+        },
+
+        storage: () => storage(),
+
+        api: () => api,
+
+        util: {
+            colour: parse
+        },
+
+        currentTheme: state.themes.getValue.bind(state.themes)
+    };
 }

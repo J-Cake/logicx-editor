@@ -11,7 +11,7 @@ export default class Tree extends React.Component<{ children: React.ReactElement
     constructor(props) {
         super(props);
 
-        this.state = { list: props.children.map(i => ({ heading: i.props.heading, collapsed: false, body: i })) };
+        this.state = { list: props.children.map(i => ({ heading: i.props.heading, collapsed: true, body: i })) };
     }
 
     render() {

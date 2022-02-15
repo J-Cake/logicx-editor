@@ -3,19 +3,19 @@
     "version": "2.0.1",
     "type":"module",
     "scripts": {
-        "app:app": "esbuild app/index.ts --outfile=./build/editor.js --bundle --sourcemap --platform=browser --format=esm --loader:.lpf=file",
-        
-        "build:static": "mkdir -p ./build/ext/theme && ln -sfr ./static/* ./build",
+        "build:build": "cat package.json | jq -r '.scripts | keys_unsorted[] | select(. | test(\"build.\") | not)' | xargs -d \\\\n -I {} $npm_execpath --silent run {}",
+
         "build:clean": "rm -rf ./build pnpm* .pnpm* package-lock.json yarn.lock node_nodules",
+        "build:static": "mkdir -p ./build/ext/theme && ln -sfr ./static/* ./build",
+
+        "app:app": "esbuild app/index.ts --outfile=./build/editor.js --bundle --sourcemap --platform=browser --format=esm --loader:.lpf=file",
 
         "ext:theme-default": "ln -sfr ./src/themes/default.js ./build/ext/theme/default.js",
         "ext:document": "esbuild src/document/ext.js --outfile=./build/ext/document.js --bundle --sourcemap --platform=browser --format=esm --loader:.lpf=file",
         "ext:find-action": "esbuild src/ui/find-action.jsx --outfile=./build/ext/find-action.js --bundle --sourcemap --platform=browser --format=esm --loader:.lpf=file",
-        "ext:test": "esbuild src/viewport/test/ext.jsx --outfile=./build/ext/test.js --bundle --sourcemap --platform=browser --format=esm --loader:.lpf=file"
+        "ext:chain": "esbuild src/viewport/chain/ext.tsx --outfile=./build/ext/chain.js --bundle --sourcemap --platform=browser --format=esm --loader:.lpf=file"
     },
     "dependencies": {
-        "konva": "latest",
-        "react-konva": "latest",
         "react": "latest",
         "react-dom": "latest",
         "mousetrap": "latest",

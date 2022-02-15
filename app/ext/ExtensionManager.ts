@@ -1,5 +1,7 @@
+import React from "react";
+
 import StateManager from "../stateManager";
-import Extension from "./Extension";
+import extension, { Extension } from "./Extension";
 
 export default class ExtensionManager {
     private readonly extensions: { [Name in string]: Extension };
@@ -16,16 +18,34 @@ export default class ExtensionManager {
     }
 
     async loadExtension(manifest: string): Promise<void> {
-        // unsafe. I know. stfu
-        new Function('extension', await (await fetch(manifest)).text())(function (name, onLoad) {
-            if (name in this.extensions)
-                throw `Extension ${name} already exists`;
+        // const source = await (await fetch(manifest)).text();
 
-            const ext = this.extensions[name] = new Extension(name, onLoad);
-            this.sharedState.set(name, new StateManager({}));
+        // // unsafe. I know. stfu
+        // new Function('extension', source)(function (name, onLoad) {
+        //     if (name in this.extensions)
+        //         throw `Extension ${name} already exists`;
 
-            onLoad(ext);
-        }.bind(this));
+        //     const ext = this.extensions[name] = extension(name, onLoad);
+        //     this.sharedState.set(name, new StateManager({}));
+
+        //     new Promise(ok => ok(onLoad(ext))); // load each asynchronously
+        // }.bind(this));
+
+        const { default: ext, name } = await import(manifest);
+
+        if (typeof ext !== 'function')
+            throw `Extension ${name} must provide a default export`;
+
+        if (typeof name !== 'string' || name.length === 0)
+            throw `Extension ${name} must provide a name`;
+
+        if (name in this.extensions)
+            throw `Extension ${name} already exists`;
+
+        const extInstance = this.extensions[name] = extension(name, ext);
+        this.sharedState.set(name, new StateManager({}));
+
+        new Promise(ok => ok(ext(extInstance, React))); // load each asynchronously
     }
 
     static async loadExtensions(extensions: string[]): Promise<ExtensionManager> {
@@ -35,5 +55,16 @@ export default class ExtensionManager {
             await manager.loadExtension(i);
 
         return manager;
+    }
+
+    findAPISymbol<T>(symbol: string): T {
+        const namespaces = symbol.split('.');
+
+        const extension = this.extensions[namespaces.shift()];
+
+        if (!extension)
+            throw `Extension ${symbol} does not exist`;
+
+        return extension.api().getSymbol<T>(namespaces.join('.'));
     }
 }

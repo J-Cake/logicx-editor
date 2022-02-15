@@ -1,3 +1,5 @@
+import $ from "jquery";
+
 import { StateMgr } from "..";
 import StateManager from "../stateManager";
 
@@ -27,7 +29,7 @@ interface ViewportManagerState {
     right: PanelItem[], 
     left_focus: number, 
     right_focus: number, 
-    viewport: () => JSX.Element,
+    viewport: (parent: JQuery) => JSX.Element,
 
     LeftToolbar: ActionItem[],
     RightToolbar: ActionItem[],

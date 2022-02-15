@@ -3,33 +3,53 @@ import _ from 'lodash';
 
 import Tree, * as tree from '../../ui/components/tree';
 
-extension('find-action', function (extension) {
+export const name = 'find-action';
 
-    const find = extension.panel({ label: 'find', icon: 'search', panel: 'right' }, function (panel) {
-        const list = namespaces => <Tree>
-            {_.map(namespaces, (namespace, name) => <tree.TreeNode key={name} heading={name}>
-                {list(namespace.namespaces)}
-                {_.map(namespace.actions, action => <button onClick={() => extension.invoke(action.name)}>{action.friendly ?? action.name.split('.').pop()}</button>)}
-            </tree.TreeNode>)}
-        </Tree>;
+export default function (extension) {
 
-        return list(extension.actions().listAll());
-    });
+    class Actions extends React.Component {
+        state = { search: '' };
 
-    extension.actions().register('find', function () {
+        list(namespaces, name = 'top') {
+            return <Tree key={`action-search-tree-${name}`}>
+                {_.map(namespaces, (namespace, ns_name) => <tree.TreeNode key={`${name}-${ns_name}-${Math.random()}`} heading={ns_name}>
+                    {this.list(namespace.namespaces, ns_name)}
+                    {_.map(namespace.actions, action => {
+                        if (action.name.toLowerCase().trim().includes(this.state.search.toLowerCase().trim()) || this.state.search.trim().length === 0)
+                            return <button onClick={() => extension.action.invoke(action.name)}>{action.friendly ?? action.name.split('.').pop()}</button>;
+                        return null;
+                    })}
+                </tree.TreeNode>)}
+            </Tree>;
+        }
+
+        setSearch(target) {
+            this.setState({ search: target.target.value });
+        }
+
+        render() {
+            return <div>
+                <input type="text" placeholder="filter" focused="true" value={this.state.search} onChange={target => this.setSearch(target)} />
+
+                {this.list(extension.action.listAll())}
+            </div>;
+        }
+    }
+
+    const find = extension.ui.panel({ label: 'find', icon: 'search', panel: 'right' }, () => <Actions />);
+
+    extension.action.register('find', function () {
         find.focus();
     }, 'Run Action');
 
-    extension.actions().register('define-shortcut', function() {
-        console.log('Defining shortcut');
-    }, 'Set Keyboard Shortcut');
+    extension.action.register('define-shortcut', function () { });
 
-    const settings = extension.actions().fork('settings');
+    const settings = extension.action.fork('settings');
 
-    settings.register('find', function () { console.log('settings.find') });
-    settings.register('close', function () { console.log('settings.close') });
+    settings.register('find', function () { });
+    settings.register('close', function () { });
 
-    extension.panel({ label: 'cover', icon: 'door', panel: 'right' }, function (panel) {
+    extension.ui.panel({ label: 'cover', icon: 'door', panel: 'right' }, function (panel) {
         return <div>Hi</div>
     });
-});
+}

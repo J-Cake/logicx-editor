@@ -13,3 +13,12 @@ body {
     color: var(--theme-font-colour);
     font: var(--theme-font-size) var(--theme-font-family);
 }
+
+ul.tree li.tree-item::marker {
+    content: '';
+    font-family: 'remixicon';
+}
+
+ul.tree li.tree-item.expanded::marker {
+    content: '';
+}
