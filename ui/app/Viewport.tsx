@@ -11,6 +11,7 @@ export default class Viewport extends React.Component<ViewportProps, { viewport:
 
     componentDidMount(): void {
         setTimeout(() => this.forceUpdate(), 0);
+        StateMgr.on('theme-change', () => this.forceUpdate());
     }
 
     render() {

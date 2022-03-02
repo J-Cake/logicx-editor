@@ -1,5 +1,7 @@
 import $ from 'jquery';
 
+import { StateMgr } from '..';
+
 export type Colour = [r: number, g: number, b: number, a?: number] & { stringify: () => string };
 export const colour = (r: number, g: number, b: number, a?: number): Colour => Object.defineProperty([r, g, b, a] as Colour, 'stringify', { value: () => `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}${(a ?? 255).toString(16).padStart(2, '0')}` });
 
@@ -96,5 +98,7 @@ export default class ThemeMananger {
         this.root.css('--theme-border-colour', theme.borders.colour[variant].stringify());
         this.root.css('--theme-border-weight', theme.borders.weight);
         this.root.css('--theme-margin', theme.margin);
+
+        StateMgr.broadcast('theme-change');
     }
 }
