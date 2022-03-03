@@ -4,9 +4,9 @@ import { StateMgr } from "..";
 import StateManager from "../stateManager";
 
 export type PanelHandle = {
-    focus();
-    moveLeft();
-    moveRight();
+    focus(): void;
+    moveLeft(): void;
+    moveRight(): void;
 };
 
 type PanelItem = {
@@ -66,6 +66,8 @@ export default class ViewportManager extends StateManager<ViewportManagerState> 
                         return { right_focus: rightIndex };
 
                     console.warn(`failed to focus ${panel.label} as it does not exist`);
+
+                    return {};
                 }),
 
                 moveLeft: () => this.dispatch('panel-move', prev => ({ left: prev.left.filter(i => i !== p).concat(p), right: prev.left.filter(i => i !== p) })),

@@ -1,23 +1,26 @@
 import React from 'react';
+import { chain as _ } from 'lodash';
 
 import type { Colour } from '../../../app/ext/ThemeManager';
 import { StateMgr } from '../ext';
 
 export interface ComponentProps {
-    inputs: [active: boolean, label?: string][],
-    outputs: [active: boolean, label?: string][],
+    inputs: { [key in string]: boolean },
+    outputs: { [key in string]: boolean },
     pos: [number, number],
     direction?: [dir: 0 | 90 | 180 | 270, flip?: boolean],
     label?: string,
-    debugTarget?: boolean
+    debugTarget?: boolean,
+
+    onActivate?: () => void
 }
 
-export default class Component extends React.Component<ComponentProps, ComponentProps> {
+export default class RenderComponent extends React.Component<ComponentProps, ComponentProps> {
 
-    constructor(props) {
+    constructor(props: ComponentProps) {
         super(props);
 
-        this.state = props
+        this.state = {...props};
     }
 
     public static readonly terminalLength: number = 7;
@@ -37,33 +40,35 @@ export default class Component extends React.Component<ComponentProps, Component
         const base = getValue<Colour>('colours.foreground');
         const background = getValue<Colour>('colours.background');
 
+        const inputNum = Object.keys(this.state.inputs).length, outputNum = Object.keys(this.state.outputs).length;
+
         const grid = {
-            x: this.pos[0] * gridSize + 1.5,
-            y: this.pos[1] * gridSize + 1.5,
+            x: this.pos[0] * gridSize,
+            y: this.pos[1] * gridSize,
             width: gridSize,
-            height: Math.max(this.state.inputs.length, this.state.outputs.length) * gridSize,
+            height: Math.max(inputNum, outputNum) * gridSize,
         };
         const pos = {
-            x: grid.x + Component.terminalLength,
-            y: grid.y + Component.terminalLength,
-            width: gridSize - 2 * Component.terminalLength,
-            height: Math.max(this.state.inputs.length, this.state.outputs.length) * gridSize - 2 * Component.terminalLength,
+            x: grid.x + RenderComponent.terminalLength,
+            y: grid.y + RenderComponent.terminalLength,
+            width: gridSize - 2 * RenderComponent.terminalLength,
+            height: Math.max(inputNum, outputNum) * gridSize - 2 * RenderComponent.terminalLength,
         };
 
         const input = (a: number): string => [
-            [grid.x, grid.y + gridSize * a + gridSize / 2],
-            [pos.x, grid.y + gridSize * a + gridSize / 2],
+            [grid.x, grid.y + gridSize * a + Math.floor(gridSize / 2)],
+            [pos.x, grid.y + gridSize * a + Math.floor(gridSize / 2)],
             [pos.x, Math.max(pos.y, grid.y + gridSize * a)],
             [pos.x, Math.min(pos.y + pos.height, grid.y + gridSize * a + gridSize)],
         ].map(i => i.join(' ')).join(',');
         const output = (a: number): string => [
-            [grid.x + grid.width, grid.y + gridSize * a + gridSize / 2],
-            [pos.x + pos.width, grid.y + gridSize * a + gridSize / 2],
+            [grid.x + grid.width, grid.y + gridSize * a + Math.floor(gridSize / 2)],
+            [pos.x + pos.width, grid.y + gridSize * a + Math.floor(gridSize / 2)],
             [pos.x + pos.width, Math.max(pos.y, grid.y + gridSize * a)],
             [pos.x + pos.width, Math.min(pos.y + pos.height, grid.y + gridSize * a + gridSize)],
         ].map(i => i.join(' ')).join(',');
 
-        return <g stroke={base?.stringify()} strokeWidth='1' fill={background?.stringify()}>
+        return <g stroke={base?.stringify()} strokeWidth='1' fill={background?.stringify()} onClick={() => this.props.onActivate?.()}>
 
             <rect x={pos.x} y={pos.y} width={pos.width} height={pos.height}>e
 
@@ -73,8 +78,11 @@ export default class Component extends React.Component<ComponentProps, Component
 
             </rect>
 
-            { this.state.inputs.map((i, a) => <polyline stroke={i[0] ? active.stringify() : base.stringify()} points={ input(a) }/>) }
-            { this.state.outputs.map((i, a) => <polyline stroke={i[0] ? active.stringify() : base.stringify()} points={ output(a) }/>) }
+            {_(this.state.inputs).entries().map(([,isActive], a) => <polyline key={`input-term-${a}`} stroke={isActive ? active!.stringify() : base!.stringify()} points={ input(a) }/>).value()}
+            {_(this.state.outputs).entries().map(([,isActive], a) => <polyline key={`output-term-${a}`} stroke={isActive ? active!.stringify() : base!.stringify()} points={ output(a) }/>).value()}
+
+            {/* { this.state.inputs.map((i, a) => <polyline key={`input-term-${a}`} stroke={i[0] ? active!.stringify() : base!.stringify()} points={ input(a) }/>) }
+            { this.state.outputs.map((i, a) => <polyline key={`output-term-${a}`} stroke={i[0] ? active!.stringify() : base!.stringify()} points={ output(a) }/>) } */}
         </g>;
     }
 }

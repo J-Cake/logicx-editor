@@ -12,6 +12,8 @@
         "moduleResolution": "Node",
         "outDir": "build/ts",
         "declaration": true,
-        "declarationDir": "build/lib"
+        "declarationDir": "build/lib",
+        "strict": true,
+        "importHelpers": true
     }
 }

@@ -3,8 +3,9 @@ import { StateMgr } from '../../app';
 
 import * as Tab from '../components/tab';
 
-export default class Panel extends React.Component<{ children?: React.ReactElement<{ title: string }>[], activeTab: number, position: 'left' | 'right' }, { activeTab: number }> {
-    constructor(props) {
+type Props = { children?: React.ReactElement<{ title: string }>[], activeTab: number, position: 'left' | 'right' };
+export default class Panel extends React.Component<Props, { activeTab: number }> {
+    constructor(props: Props) {
         super(props);
 
         this.state = {
@@ -15,10 +16,10 @@ export default class Panel extends React.Component<{ children?: React.ReactEleme
     }
 
     render() {
-        if (this.props.children?.length > 0)
-            if (this.props.children[this.state.activeTab])
+        if (this.props.children?.length! > 0)
+            if (this.props.children![this.state.activeTab])
                 return <Tab.TabContainer activeTab={this.state.activeTab} class={['panel', this.props.position]} onChange={active => this.setState({ activeTab: active })} group={`tab-group-${this.props.position}`}>
-                    {this.props.children ?? null}
+                    {this.props.children! ?? null}
                 </Tab.TabContainer>;
             else {
                 this.setState({ activeTab: 0 });

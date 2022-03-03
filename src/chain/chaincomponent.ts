@@ -4,44 +4,46 @@
 import Lodash from 'lodash';
 const _ = Lodash.chain;
 
-export default abstract class ChainComponent<shape extends { inputs: string[], outputs: string[] }> {
+export default abstract class ChainComponent<Inputs extends string[], Outputs extends string[]> {
 
-    public readonly inputMap: { [id in shape['inputs'][number]]: [ChainComponent<any>, string] };
-    public readonly outputMap: { [id in shape['outputs'][number]]: [ChainComponent<any>, string][] };
+    public readonly inputMap: { [id in Inputs[number]]: [ChainComponent<any[], any[]>, string] };
+    public readonly outputMap: { [id in Outputs[number]]: [ChainComponent<any[], any[]>, string][] };
 
-    private readonly inbound: { [id in shape['inputs'][number]]: boolean };
-    public outbound: { [id in shape['outputs'][number]]: boolean };
+    public readonly inbound: { [id in Inputs[number]]: boolean };
+    public readonly outbound: { [id in Outputs[number]]: boolean };
 
-    public shouldBreak?: (component: this) => boolean;
+    public shouldBreak?: (component: ChainComponent<any[], any[]>) => boolean;
 
-    protected constructor(inputs: shape['inputs'][number][], outputs: shape['outputs'][number][]) {
-        this.inputMap = Lodash.fromPairs(Lodash.map(inputs, i => [i, null])) as ChainComponent<shape>['inputMap'];
-        this.outputMap = Lodash.fromPairs(Lodash.map(outputs, i => [i, []])) as ChainComponent<shape>['outputMap'];
-        this.inbound = Lodash.fromPairs(Lodash.map(inputs, i => [i, false])) as ChainComponent<shape>['inbound'];
-        this.outbound = Lodash.fromPairs(Lodash.map(outputs, i => [i, false])) as ChainComponent<shape>['outbound'];
+    public static onUpdate?: () => void;
+
+    protected constructor(protected inputLabels: Inputs[number][], protected outputLabels: Outputs[number][]) {
+        this.inputMap = <any>Lodash.fromPairs(Lodash.map(inputLabels, i => [i, null]))// as ChainComponent<any[], any[]>['inputMap'];
+        this.outputMap = <any>Lodash.fromPairs(Lodash.map(outputLabels, i => [i, []]))// as ChainComponent<any[], any[]>['outputMap'];
+        this.inbound = <any>Lodash.fromPairs(Lodash.map(inputLabels, i => [i, false]))// as ChainComponent<any[], any[]>['inbound'];
+        this.outbound = <any>Lodash.fromPairs(Lodash.map(outputLabels, i => [i, false]))// as ChainComponent<any[], any[]>['outbound'];
     }
 
-    abstract propagate(input: boolean[]): boolean[];
-    *update(): Generator<this> {
-        for (const i in this.inputMap)
-            this.inbound[i] = this.inputMap[i][0].outbound[this.inputMap[i][1]] ?? false;
+    protected abstract propagate(input: ChainComponent<Inputs, Outputs>['inbound']): ChainComponent<Inputs, Outputs>['outbound'];
+    protected *update(): Generator<ChainComponent<any[], any[]>> {
 
-        this.outbound = _(this.outbound)
-            .keys()
-            .zip(this.propagate(Lodash.values(this.inbound)))
-            .fromPairs()
-            .value() as typeof this.outbound;
+        if (ChainComponent.onUpdate)
+            ChainComponent.onUpdate();
+
+        for (const i in this.inputMap)
+            this.inbound[i as Inputs[number]] = this.inputMap[i as Inputs[number]][0].outbound[this.inputMap[i as Inputs[number]][1]] ?? false;
+
+        Object.assign(this.outbound, this.propagate(this.inbound));
 
         if (this.shouldBreak?.(this))
             yield this; // for use in debugging
 
         for (const i in this.outputMap)
-            for (const [comp] of this.outputMap[i])
+            for (const [comp] of this.outputMap[i as Inputs[number]])
                 for (const val of comp.update())
                     yield val;
     }
 
-    addInput<T extends { inputs: string[], outputs: string[] }>(component: ChainComponent<T>, from: T['outputs'][number], to: shape['inputs'][number]): this {
+    addInput<_Inputs extends string[], Outputs extends string[]>(component: ChainComponent<_Inputs, Outputs>, from: Outputs[number], to: Inputs[number]): this {
         if (component && to && to in this.inputMap && from in component.outputMap) {
 
             this.inputMap[to] = [component, from];
@@ -50,5 +52,9 @@ export default abstract class ChainComponent<shape extends { inputs: string[], o
         } else throw `Invalid terminal`;
 
         return this;
+    }
+
+    public static update(component: ChainComponent<any[], any[]>) {
+        for (const val of component.update());
     }
 }

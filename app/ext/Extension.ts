@@ -27,7 +27,7 @@ export function extensionAPI<K extends Record<string, any>>(): ExtensionAPI<K> {
 
 export interface Extension<T = any> {
     action: {
-        invoke(name: string),
+        invoke(name: string): void,
         getNamespace(): ActionNamespace,
         register: ActionNamespace['register'],
         fork: ActionNamespace['fork'],
@@ -35,7 +35,7 @@ export interface Extension<T = any> {
     },
 
     ui: {
-        viewport(viewport: (parent: JQuery) => JSX.Element),
+        viewport(viewport: (parent: JQuery) => JSX.Element): void,
         panel: ViewportManager['addPanelItem'],
         theme: ThemeMananger['pushTheme']
     },
@@ -92,7 +92,7 @@ export default function Extension<T = any>(name: string, onLoad: (extension: Ext
             theme: state.themes.pushTheme.bind(state.themes)
         },
 
-        storage: () => storage(),
+        storage: () => storage()!,
 
         api: () => api,
 

@@ -15,13 +15,14 @@ export default class Viewport extends React.Component<ViewportProps, { viewport:
     }
 
     render() {
+        const id = "viewport"; // moving to separate binding to shut it up about duplicate ID attributes
         if (StateMgr.get().viewport.get().viewport && this.viewport.current)
-            return <div id="viewport" ref={this.viewport}>
+            return <div id={id} ref={this.viewport}>
                 {StateMgr.get().viewport.get().viewport($(this.viewport.current))}
             </div>;
-
-        return <div id="viewport" ref={this.viewport}>
-            Editing <i>{StateMgr.get().document.name}</i>
-        </div>
+        else
+            return <div id="viewport" ref={this.viewport}>
+                Editing <i>{StateMgr.get().document.name}</i>
+            </div>
     }
 }

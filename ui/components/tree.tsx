@@ -4,11 +4,13 @@ export function TreeNode(props: { heading: string, children: React.ReactNode, on
     return props.children;
 }
 
-export default class Tree extends React.Component<{ children: React.ReactElement<{ heading: string }>[] }, { list: { heading: string, collapsed: boolean, body: React.ReactElement<{ heading: string }> }[] }> {
+type Props = { children: React.ReactElement<{ heading: string }>[] };
+type State = { list: { heading: string, collapsed: boolean, body: React.ReactElement<{ heading: string }> }[] };
+export default class Tree extends React.Component<Props, State> {
 
-    state = { list: [] };
+    state: State = { list: [] };
 
-    constructor(props) {
+    constructor(props: Props) {
         super(props);
 
         this.state = { list: props.children.map(i => ({ heading: i.props.heading, collapsed: true, body: i })) };

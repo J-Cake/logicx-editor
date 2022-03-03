@@ -3,12 +3,12 @@ export const name = "default";
 export default function (extension) {
     
     const colours = {
-        primary: extension.util.colour(["#00bcd4", "#009688"]),
+        primary: extension.util.colour(["#68B2DC", "#115c96"]),
         secondary: extension.util.colour(["#f44336", "#e91e63"]),
-        foreground: extension.util.colour(["#212121", "#ffffff"]),
-        background: extension.util.colour(["#ffffff", "#212121"]),
+        foreground: extension.util.colour(["#413d3d", "#c3c3c8"]),
+        background: extension.util.colour(["#FDFCF7", "#272c2d"]),
         warn: extension.util.colour(["#ff9800", "#f44336"]),
-        danger: extension.util.colour(["#f44336", "#e91e63"])
+        danger: extension.util.colour(["#DB6869", "#cb3403"])
     };
 
     extension.ui.theme('default', {

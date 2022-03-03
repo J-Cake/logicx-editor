@@ -8,13 +8,14 @@ export class TabView extends React.Component<{ title: string }> {
     }
 }
 
-export class TabContainer extends React.Component<{ activeTab: number, children?: React.ReactElement<{ title: string }>[], class?: string[], onChange: (index: number) => void, group: string }> {
-    constructor(props) {
+type Props = { activeTab: number, children?: React.ReactElement<{ title: string }>[], class?: string[], onChange: (index: number) => void, group: string };
+export class TabContainer extends React.Component<Props> {
+    constructor(props: Props) {
         super(props);
     }
 
     render() {
-        return <div className={`tab-container ${this.props.class.join(' ')}`}>
+        return <div className={`tab-container ${this.props.class?.join(' ') ?? ''}`}>
             <div className="tab-header">
                 {this.props.children?.map((i, a) => <div className="tab logicx-widget" key={`tab-${i.props.title}`}>
                     <label>

@@ -60,11 +60,11 @@ export default class ExtensionManager {
     findAPISymbol<T>(symbol: string): T {
         const namespaces = symbol.split('.');
 
-        const extension = this.extensions[namespaces.shift()];
+        const extension = this.extensions[namespaces.shift()!];
 
         if (!extension)
             throw `Extension ${symbol} does not exist`;
 
-        return extension.api().getSymbol<T>(namespaces.join('.'));
+        return extension.api().getSymbol<T>(namespaces.join('.'))!;
     }
 }

@@ -10,10 +10,10 @@ import { StateMgr } from "../../app";
 
 export default class Interface extends React.Component<{ documentId: string }> {
 
-    constructor(props) {
+    constructor(props: { documentId: string }) {
         super(props);
 
-        const extensions = JSON.parse(window.localStorage.getItem("extensions"));
+        const extensions = JSON.parse(window.localStorage.getItem("extensions") ?? '[]');
         StateMgr.get().viewport.on('panel-move', () => this.forceUpdate());
         StateMgr.get().viewport.on('toolbar-update', () => this.forceUpdate());
     }

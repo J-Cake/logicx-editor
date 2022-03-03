@@ -62,7 +62,7 @@ export class ActionNamespace {
                 throw `Action namespace '${search[0]}' does not exist`;
     }
 
-    details(name: string): ActionItem {
+    details(name: string): ActionItem | null {
         const search = name.split('.');
 
         if (search.length === 1)
@@ -75,6 +75,8 @@ export class ActionNamespace {
                 return this.children[search[0]].details(search.slice(1).join('.'));
             else
                 throw `Action namespace '${search[0]}' does not exist`;
+
+        return null;
     }
 
     list(): ActionTree[string] {
@@ -123,7 +125,7 @@ export default class ActionManager {
         const search = name.split('.');
 
         if (search[0] in this.namespaces)
-            return this.namespaces[search[0]].details(search.slice(1).join('.'));
+            return this.namespaces[search[0]].details(search.slice(1).join('.'))!;
 
         else throw `Action namespace '${search[0]}' does not exist`;
     }

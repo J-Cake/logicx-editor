@@ -28,13 +28,13 @@ export interface Theme {
     margin: number
 }
 
-const isColour = (colour: any): colour is Colour => Array.isArray(colour) && (colour.length === 3 || colour.length === 4) && typeof colour['stringify'] === 'function' && /^#([a-fA-F0-9]{2}){3,4}$/.test(colour['stringify']());
+const isColour = (colour: any): colour is Colour => Array.isArray(colour) && (colour.length === 3 || colour.length === 4) && 'stringify' in colour && (typeof colour['stringify'] === 'function' && /^#([a-fA-F0-9]{2}){3,4}$/.test((colour as Colour)['stringify']()));
 const isColourOption = (option: any): option is [light: Colour, dark: Colour] => Array.isArray(option) && option.length === 2 && isColour(option[0]) && isColour(option[1]);
 
 export default class ThemeMananger {
 
     private readonly themes: { [name: string]: Theme } = {};
-    public current: keyof ThemeMananger['themes'];
+    public current: keyof ThemeMananger['themes'] = "default";
     private mediaQuery: MediaQueryList;
     private variant: 'light' | 'dark';
 
