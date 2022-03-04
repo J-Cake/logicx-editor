@@ -1,7 +1,7 @@
 import React from 'react';
 
-import type { Extension } from '../../app/ext/Extension';
-import StateManager from '../../app/stateManager';
+import type { Extension } from '../../core/ext/Extension';
+import StateManager from '../../core/stateManager';
 
 import RenderComponent from './render/component';
 
@@ -10,6 +10,8 @@ import glob from './glob.css';
 import ChainComponent from './chaincomponent';
 import Wire from './render/wire';
 import Stateless, { TruthTable } from './stateless';
+import ToolButton from '../../ui/components/ToolButton';
+import type { ActionItem } from '../../core/ext/ViewportManager';
 
 export const name = 'chain';
 
@@ -63,11 +65,17 @@ const inputs = [new Input(), new Input()];
 and.addInput(inputs[0], 'input', 'a');
 and.addInput(inputs[1], 'input', 'b');
 
-export default function Ext(extension: Extension) {
+export default function Ext(extension: Extension<{ tools: string[] }>) {
     const { pan, zoom } = StateMgr.setState({ getValue: extension.currentTheme });
 
+    const view = extension.action.fork('view');
+    view.register('reset', () => StateMgr.dispatch('transform', prev => ({ pan: [0, 0], zoom: 1 })));
+    view.register('zoom-in', () => StateMgr.dispatch('transform', prev => ({ pan: [0, 0], zoom: prev.zoom + 0.05 })));
+    view.register('zoom-out', () => StateMgr.dispatch('transform', prev => ({ pan: [0, 0], zoom: Math.max(0.05, prev.zoom - 0.05) })));
+    extension.storage().setState({ tools: ['chain.view.reset', 'chain.view.zoom-in', 'chain.view.zoom-out'] });
+
     // TODO: Figure out how to migrate to function component
-    class Viewport extends React.Component<{ pan: [number, number], zoom: number }, { pan: [number, number], zoom: number }> {
+    class Viewport extends React.Component<{ pan: [number, number], zoom: number, width: number, height: number }, { pan: [number, number], zoom: number }> {
 
         private updateTimeout?: number;
         private readonly ref = React.createRef<SVGSVGElement>();
@@ -75,8 +83,8 @@ export default function Ext(extension: Extension) {
         state = { pan: [0, 0] as [number, number], zoom: 1 };
 
         componentDidMount() {
-            ChainComponent.onUpdate = () => this.updateTimeout ?? (this.updateTimeout = window.setTimeout(() => this.forceUpdate(), 1000 / 60));
-            
+            ChainComponent.onUpdate = () => this.updateTimeout ?? (this.updateTimeout = window.setTimeout(() => (this.forceUpdate(), delete this.updateTimeout), 1000 / 60));
+
             StateMgr.on('transform', state => this.setState({ pan: state.pan, zoom: state.zoom }));
 
             window.setTimeout(() => this.forceUpdate());
@@ -85,14 +93,14 @@ export default function Ext(extension: Extension) {
         render() {
             const state = StateMgr.get();
             const [x, y] = [Math.floor(this.state.pan[0]) + 0.5, Math.floor(this.state.pan[1]) + 0.5];
-            
-            return <svg ref={this.ref} width='100%' height='100%' onWheel={e => StateMgr.dispatch('transform', prev => ({
+
+            return <svg ref={this.ref} width={this.ref.current?.clientWidth ?? this.props.width} height={this.ref.current?.clientHeight ?? this.props.height} onWheel={e => StateMgr.dispatch('transform', prev => ({
                 pan: [prev.pan[0] + e.deltaX, prev.pan[1] + e.deltaY]
-            }))} viewBox={`${x} ${y} ${this.ref.current?.clientWidth ?? '0'} ${this.ref.current?.clientHeight ?? '0'}`}>
+            }))} viewBox={`${x} ${y} ${this.ref.current?.clientWidth ?? this.props.width} ${this.ref.current?.clientHeight ?? this.props.height}`}>
                 <style>{glob}</style>
-                
-                <RenderComponent outputs={inputs[0].outbound} inputs={inputs[0].inbound} pos={[0, 0]} label='test' key={'input-1'} onActivate={() => inputs[0].toggle()} />
-                <RenderComponent outputs={inputs[1].outbound} inputs={inputs[1].inbound} pos={[0, 1]} label='test' key={'input-2'} onActivate={() => inputs[1].toggle()} />
+
+                <RenderComponent outputs={inputs[0].outbound} inputs={inputs[0].inbound} pos={[0, 0]} label='test' key={'input-0'} onActivate={() => inputs[0].toggle()} />
+                <RenderComponent outputs={inputs[1].outbound} inputs={inputs[1].inbound} pos={[0, 1]} label='test' key={'input-1'} onActivate={() => inputs[1].toggle()} />
                 <RenderComponent outputs={and.outbound} inputs={and.inbound} pos={[4, 0]} label='test' key={'and'} />
                 <Wire points={[[0, 0], [4, 0]]} from={[inputs[0], 'input']} to={[and, 'a']} />
                 <Wire points={[[0, 1], [4, 1]]} from={[inputs[1], 'input']} to={[and, 'b']} />
@@ -101,6 +109,12 @@ export default function Ext(extension: Extension) {
     }
 
     extension.ui.viewport(function (parent) {
-        return <Viewport pan={pan} zoom={zoom} />;
+        return <section id="document-editor">
+            <div className={`toolbar top`}>
+                {extension.storage().get().tools?.map(i => extension.action.details(i)!).filter(i => i).map((i: ActionItem, a) => <ToolButton key={Math.random()} action={i} onClick={() => i.invoke()} />)}
+            </div>
+
+            <Viewport pan={pan} zoom={zoom} width={parent.width()!} height={parent.height()!} />
+        </section>;
     });
 }

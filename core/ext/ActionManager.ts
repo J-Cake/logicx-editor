@@ -37,7 +37,12 @@ export class ActionNamespace {
         if (name.includes('.'))
             throw `Action name cannot contain '.'`;
 
-        const actionObject = { name: this.getName(name), enabled: true, action, friendly };
+        const actionObject = { 
+            name: this.getName(name), 
+            enabled: true, action, 
+            friendly,
+            invoke: () => action()
+        };
         this.actions[name] = actionObject;
 
         return enabled => actionObject.enabled = enabled;
@@ -63,20 +68,23 @@ export class ActionNamespace {
     }
 
     details(name: string): ActionItem | null {
+        if (typeof name !== 'string' || name.length <= 0)
+            throw `Invalid action`;
+
         const search = name.split('.');
 
         if (search.length === 1)
             if (name in this.actions) {
                 if (this.actions[name].enabled)
                     return this.actions[name];
-            } else throw `Action '${name}' does not exist`;
+            } else return null;
         else
             if (search[0] in this.children)
                 return this.children[search[0]].details(search.slice(1).join('.'));
             else
-                throw `Action namespace '${search[0]}' does not exist`;
+                return null;
 
-        return null;
+        throw `Invalid namespace specifier`;
     }
 
     list(): ActionTree[string] {
@@ -87,6 +95,7 @@ export class ActionNamespace {
                 icon: i.icon,
                 enabled: i.enabled,
                 shortcut: i.shortcut,
+                invoke: () => i.invoke()
             })),
             namespaces: _.mapValues(this.children, i => i.list())
         }
@@ -121,13 +130,16 @@ export default class ActionManager {
         else throw `Action namespace '${search[0]}' does not exist`;
     }
 
-    details(name: string): ActionItem {
+    details(name: string): ActionItem | null {
+        if (typeof name !== 'string' || name.length === 0)
+            throw `Invalid action`;
+
         const search = name.split('.');
 
         if (search[0] in this.namespaces)
-            return this.namespaces[search[0]].details(search.slice(1).join('.'))!;
+            return this.namespaces[search[0]].details(search.slice(1).join('.'));
 
-        else throw `Action namespace '${search[0]}' does not exist`;
+        return null;
     }
 
     list(): ActionTree {

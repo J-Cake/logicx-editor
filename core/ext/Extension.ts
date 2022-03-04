@@ -30,6 +30,7 @@ export interface Extension<T = any> {
         invoke(name: string): void,
         getNamespace(): ActionNamespace,
         register: ActionNamespace['register'],
+        details: ActionNamespace['details'],
         fork: ActionNamespace['fork'],
         listAll: ActionNamespace['listAll']
     },
@@ -54,7 +55,9 @@ export default function Extension<T = any>(name: string, onLoad: (extension: Ext
     const state = StateMgr.get();
     const actionNamespace: ActionNamespace = state.actions.pushNamespace(name);
     const api = extensionAPI();
-    const storage = () => state.extensions.sharedState.get(name);
+    
+    const sharedState = new StateManager<T>({}); // TODO: Find a way to store these such that each can be retrieved. Extension IDs for example
+    const storage = () => sharedState;
 
     function parse(colourValue: string): Colour;
     function parse(colourValue: [string, string]): [Colour, Colour];
@@ -77,6 +80,7 @@ export default function Extension<T = any>(name: string, onLoad: (extension: Ext
         action: {
             invoke: name => state.actions.invokeAction(name),
             getNamespace: () => actionNamespace,
+            details: (name: string) => state.actions.details(name),
             register: actionNamespace.register.bind(actionNamespace),
             fork: actionNamespace.fork.bind(actionNamespace),
             listAll: actionNamespace.listAll.bind(actionNamespace)

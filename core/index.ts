@@ -8,9 +8,9 @@ import StateManager from './stateManager';
 
 // @ts-ignore
 import defaultPreferences from './default.lpf';
-import app from '../ui/';
-import ViewportManager from './ext/ViewportManager';
+import ViewportManager, { ActionItem } from './ext/ViewportManager';
 import LogicXDocument from './Document';
+import app from '../ui/index';
 
 export interface GlobalState {
     actions: ActionManager,
@@ -36,10 +36,11 @@ state.themes.switchTheme(state.preferences.get('theme'));
 
 const { actions, viewport } = StateMgr.get();
 viewport.setState({
-    LeftToolbar: StateMgr.get().preferences.get("toolbarLeft").map(i => actions.details(i)),
-    RightToolbar: StateMgr.get().preferences.get("toolbarRight").map(i => actions.details(i)),
-    TopToolbar: StateMgr.get().preferences.get("toolbarTop").map(i => actions.details(i)),
+    LeftToolbar: StateMgr.get().preferences.get("toolbarLeft").map(i => actions.details(i)).filter(i => i) as ActionItem[],
+    RightToolbar: StateMgr.get().preferences.get("toolbarRight").map(i => actions.details(i)).filter(i => i) as ActionItem[],
+    TopToolbar: StateMgr.get().preferences.get("toolbarTop").map(i => actions.details(i)).filter(i => i) as ActionItem[],
 });
 
+setTimeout(() => StateMgr.broadcast('ready'), 0);
 
-setTimeout(() => app($("section#root")[0]), 0);
+StateMgr.on('ready', () => app($("section#root")[0]));

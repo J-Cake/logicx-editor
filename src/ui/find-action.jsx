@@ -16,7 +16,7 @@ export default function (extension) {
                     {this.list(namespace.namespaces, ns_name)}
                     {_.map(namespace.actions, action => {
                         if (action.name.toLowerCase().trim().includes(this.state.search.toLowerCase().trim()) || this.state.search.trim().length === 0)
-                            return <button onClick={() => extension.action.invoke(action.name)}>{action.friendly ?? action.name.split('.').pop()}</button>;
+                            return <button onClick={() => extension.action.invoke(action.name)} key={`${Math.random()}-${Math.random()}`}>{action.friendly ?? action.name.split('.').pop()}</button>;
                         return null;
                     })}
                 </tree.TreeNode>)}

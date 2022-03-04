@@ -6,7 +6,7 @@ import ToolBar from "./ToolBar";
 import Viewport from "./Viewport";
 
 import * as Tab from '../components/tab';
-import { StateMgr } from "../../app";
+import { StateMgr } from "../../core";
 
 export default class Interface extends React.Component<{ documentId: string }> {
 

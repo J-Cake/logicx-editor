@@ -18,19 +18,6 @@ export default class ExtensionManager {
     }
 
     async loadExtension(manifest: string): Promise<void> {
-        // const source = await (await fetch(manifest)).text();
-
-        // // unsafe. I know. stfu
-        // new Function('extension', source)(function (name, onLoad) {
-        //     if (name in this.extensions)
-        //         throw `Extension ${name} already exists`;
-
-        //     const ext = this.extensions[name] = extension(name, onLoad);
-        //     this.sharedState.set(name, new StateManager({}));
-
-        //     new Promise(ok => ok(onLoad(ext))); // load each asynchronously
-        // }.bind(this));
-
         const { default: ext, name } = await import(manifest);
 
         if (typeof ext !== 'function')

@@ -1,5 +1,5 @@
 import React from 'react';
-import { StateMgr } from '../../app';
+import { StateMgr } from '../../core';
 
 import * as Tab from '../components/tab';
 

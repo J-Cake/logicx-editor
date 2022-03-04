@@ -21,7 +21,8 @@ export type ActionItem = {
     friendly?: string,
     icon?: string,
     shortcut?: string,
-    enabled: boolean
+    enabled: boolean,
+    invoke: () => void
 };
 
 interface ViewportManagerState {

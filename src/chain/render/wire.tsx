@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Colour } from '../../../app/ext/ThemeManager';
+import { Colour } from '../../../core/ext/ThemeManager';
 import ChainComponent from "../chaincomponent";
 import { StateMgr } from '../ext';
 

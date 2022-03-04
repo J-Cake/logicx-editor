@@ -1,7 +1,7 @@
 import React from 'react';
 import { chain as _ } from 'lodash';
 
-import type { Colour } from '../../../app/ext/ThemeManager';
+import type { Colour } from '../../../core/ext/ThemeManager';
 import { StateMgr } from '../ext';
 
 export interface ComponentProps {

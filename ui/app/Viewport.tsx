@@ -1,6 +1,6 @@
 import $ from 'jquery';
 import React from "react";
-import { StateMgr as StateMgr } from "../../app";
+import { StateMgr as StateMgr } from "../../core";
 
 export interface ViewportProps {
 
