@@ -3,17 +3,7 @@
     "version": "2.0.1",
     "type":"module",
     "scripts": {
-        ".build": "cat package.json | jq -r '.scripts | keys_unsorted[] | select(. | startswith(\".\") | not)' | xargs -d \\\\n -I {} $npm_execpath --silent run {}",
 
-        ".clean": "rm -rf build pnpm* .pnpm* package-lock.json yarn.lock node_nodules",
-        ".static": "mkdir -p build/ext/theme && ln -sfr static/* build",
-
-        "app:core": "esbuild core/index.ts --outfile=build/editor.js --bundle --sourcemap --platform=browser --format=esm --loader:.lpf=file",
-
-        "ext:theme-default": "ln -sfr src/themes/default.js build/ext/theme/default.js",
-        "ext:document": "esbuild src/document/ext.js --outfile=build/ext/document.js --bundle --sourcemap --platform=browser --format=esm --loader:.lpf=file",
-        "ext:find-action": "esbuild src/ui/find-action.jsx --outfile=build/ext/find-action.js --bundle --sourcemap --platform=browser --format=esm --loader:.lpf=file",
-        "ext:chain": "esbuild src/chain/ext.tsx --outfile=build/ext/chain.js --bundle --sourcemap --platform=browser --format=esm --loader:.lpf=file --loader:.css=text"
     },
     "dependencies": {
         "react": "latest",
@@ -22,11 +12,56 @@
         "lodash": "latest"
     },
     "devDependencies": {
-        "esbuild": "latest",
-        "typescript": "latest",
         "@types/react": "latest",
         "@types/react-dom": "latest",
         "@types/mousetrap": "latest",
-        "@types/lodash": "latest"
+        "@types/lodash": "latest",
+        "@j-cake/mkjson": "latest",
+        "@j-cake/jstempl": "latest",
+        "chalk": "latest",
+        "esbuild": "latest",
+        "typescript": "latest"
+    },
+    "targets": {
+        "clean": {
+            "phony": true,
+            "run": "rm -rf build node_nodules *lock*"
+        },
+        "all": {
+            "phony": true,
+            "dependencies": ["build/ext/theme/default.js", "build/ext/document.js", "build/ext/find-action.js", "build/ext/chain.js", "build/ext/chain_select.js", "build/editor.js"],
+            "run": "ln -sfr static/* build/"
+        },
+        "build/editor.js": {
+            "dependencies": ["core/*.ts", "ui/*.ts+"],
+            "run": [
+                "mkdir -p build",
+                "esbuild core/index.ts --outdir=build  --bundle --sourcemap --splitting --platform=browser --format=esm --loader:.lpf=file",
+                "mv build/index.js build/editor.js"
+            ]
+        },
+        "build/ext/theme/default.js": {
+            "dependencies": ["src/themes/default.js", "build/editor.js"],
+            "run": "mkdir -p build/ext/theme && ln -sfr src/themes/default.js build/ext/theme/default.js"
+        },
+        "build/ext/document.js": {
+            "dependencies": ["src/document/*.ts+", "build/editor.js"],
+            "run": "esbuild src/document/ext.tsx --outfile=build/ext/document.js --bundle --sourcemap --platform=browser --format=esm --loader:.lpf=file"
+        },
+        "build/ext/find-action.js": {
+            "dependencies": ["src/ui/find-action.jsx", "build/editor.js"],
+            "run": "esbuild src/ui/find-action.jsx --outfile=build/ext/find-action.js --bundle --sourcemap --platform=browser --format=esm --loader:.lpf=file"
+        },
+        "build/ext/chain.js": {
+            "dependencies": ["src/chain/ext.tsx", "build/editor.js"],
+            "run": "esbuild src/chain/ext.tsx --outfile=build/ext/chain.js --bundle --sourcemap --platform=browser --format=esm --loader:.lpf=file --loader:.css=text"
+        },
+        "build/ext/chain_select.js": {
+            "dependencies": ["src/chain/tools/select.ts", "build/ext/chain.js"],
+            "run": [
+                "mkdir -p build/ext",
+                "esbuild src/chain/tools/select.ts --outfile=build/ext/chain_select.js --bundle --sourcemap --platform=browser --format=esm --loader:.lpf=file --loader:.css=text"
+            ]
+        }
     }
 }

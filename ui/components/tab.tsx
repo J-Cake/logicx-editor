@@ -1,6 +1,6 @@
 import React from "react";
 
-export class TabView extends React.Component<{ title: string }> {
+export class TabView extends React.Component<{ title: string, children: React.ReactChild[] | React.ReactChild }> {
     render() {
         return <div className="tab-view logicx-widget">
             {this.props.children}

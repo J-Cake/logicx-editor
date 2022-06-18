@@ -5,7 +5,7 @@ This directory contains the source for all of the interface extensions provided 
 Each extension should have an `ext:*` npm build script associated with it. If not, they follow the following command template:
 
 ```bash
-pnpm exec esbuild ./src/<name/ext.js> --outfile=./build/ext/name.js --bundle --sourcemap --platform=browser --format=esm --loader:lpf=file
+pnpm exec esbuild ./src/<name/ext.tsx> --outfile=./build/ext/name.js --bundle --sourcemap --platform=browser --format=esm --loader:lpf=file
 ```
 
 > **Note:** J/TSX files are valid and do not need to be distinguished between. 

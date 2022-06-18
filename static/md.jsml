@@ -1,0 +1,3 @@
+$use template = 'static/template.jsml' as = 'body' title = 'Markdown' {
+    article [text/js+node yield* md;]
+}

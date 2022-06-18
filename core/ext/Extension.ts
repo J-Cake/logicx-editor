@@ -1,28 +1,38 @@
-import { GlobalState, StateMgr as StateMgr } from "..";
+import {StateMgr as StateMgr} from "..";
 import StateManager from "../stateManager";
-import { ActionNamespace } from "./ActionManager";
-import ThemeMananger, { Colour, colour } from "./ThemeManager";
+import {ActionNamespace} from "./ActionManager";
+import ThemeManager, {Colour, colour} from "./ThemeManager";
 import ViewportManager from "./ViewportManager";
+import {query} from "../api/interfaces";
 
 export interface ExtensionAPI<K extends Record<string, any>> {
     expose<T extends K[string]>(name: string, object: T): T,
-    getSymbol<T extends K[string]>(name: string): T | null,
+
+    getSymbol<T extends K[string]>(symbol: string): T | null,
+
+    getNamespace<K>(namespace: string): ExtensionAPI<K>
 
     require<T>(symbol: string): T,
 }
 
-export function extensionAPI<K extends Record<string, any>>(): ExtensionAPI<K> {
-    const objects: Map<keyof K, any> = new Map();
-    return {
-        expose<Name extends keyof K>(name: Name, object: K[Name]): typeof object {
-            if (!(name as string).includes('.')) {
-                objects.set(name, object);
-                return object;
-            } else throw `Extension APIs cannot expose object with a dot in its name`;
-        },
-        getSymbol: <Name extends keyof K>(name: Name): K[Name] => objects.has(name) ? objects.get(name) : null,
-        require: <T>(symbol: string): T => StateMgr.get().extensions.findAPISymbol(symbol)
+export const APIs: Record<string, Map<keyof Record<string, any>, any>> = {};
+
+export function extensionAPI<K extends Record<string, any>>(this: { name: string }): ExtensionAPI<K> {
+    const getApiInterface = function (objects: Map<keyof K, any>): ExtensionAPI<K> {
+        return {
+            expose<Name extends keyof K>(name: Name, object: K[Name]): typeof object {
+                if (!(name as string).includes('.')) {
+                    objects.set(name, object);
+                    return object;
+                } else throw `Extension APIs cannot expose an object with a dot in its name`;
+            },
+            getSymbol: <Name extends keyof K>(symbol: Name): K[Name] => objects.has(symbol) ? objects.get(symbol) : null,
+            getNamespace: <K>(namespace: string): ExtensionAPI<K> => getApiInterface(APIs[namespace] ?? null),
+            require: <T>(symbol: string): T => StateMgr.get().extensions.findAPISymbol(symbol)
+        }
     }
+
+    return getApiInterface(APIs[this.name] = new Map());
 }
 
 export interface Extension<T = any> {
@@ -38,12 +48,14 @@ export interface Extension<T = any> {
     ui: {
         viewport(viewport: (parent: JQuery) => JSX.Element): void,
         panel: ViewportManager['addPanelItem'],
-        theme: ThemeMananger['pushTheme']
+        theme: ThemeManager['pushTheme']
     },
 
     util: {
         colour(colour: string | [string, string]): Colour | [Colour, Colour]
-    }
+    },
+
+    resource: typeof query,
 
     storage: () => StateManager<T>,
     api: <K extends Record<string, any>>() => ExtensionAPI<K>,
@@ -54,8 +66,8 @@ export interface Extension<T = any> {
 export default function Extension<T = any>(name: string, onLoad: (extension: Extension<T>) => void): Extension<T> {
     const state = StateMgr.get();
     const actionNamespace: ActionNamespace = state.actions.pushNamespace(name);
-    const api = extensionAPI();
-    
+    const api = extensionAPI.bind({name: name})();
+
     const sharedState = new StateManager<T>({}); // TODO: Find a way to store these such that each can be retrieved. Extension IDs for example
     const storage = () => sharedState;
 
@@ -74,7 +86,7 @@ export default function Extension<T = any>(name: string, onLoad: (extension: Ext
         } else {
             return [parseColour(colourValue[0]), parseColour(colourValue[1])];
         }
-    };
+    }
 
     return {
         action: {
@@ -89,7 +101,7 @@ export default function Extension<T = any>(name: string, onLoad: (extension: Ext
         ui: {
             viewport(viewport: (parent: JQuery) => JSX.Element) {
                 if (typeof viewport === 'function')
-                    state.viewport.setState({ viewport: viewport });
+                    state.viewport.setState({viewport: viewport});
                 else throw `Expected viewport to be a function`;
             },
             panel: state.viewport.addPanelItem.bind(state.viewport),
@@ -103,6 +115,8 @@ export default function Extension<T = any>(name: string, onLoad: (extension: Ext
         util: {
             colour: parse
         },
+
+        resource: query,
 
         currentTheme: state.themes.getValue.bind(state.themes)
     };

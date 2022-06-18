@@ -4,12 +4,12 @@ import { Colour } from '../../../core/ext/ThemeManager';
 import ChainComponent from "../chaincomponent";
 import { StateMgr } from '../ext';
 
-type Props = {
+export type Wire = {
     points: [x: number, y: number][],
     from: [comp: ChainComponent<any[], any[]>, terminal: string],
     to: [comp: ChainComponent<any[], any[]>, terminal: string]
 };
-export default function RenderWire(props: Props) {
+export default function RenderWire(props: Wire) {
     const { getValue } = StateMgr.get();
 
     const active = getValue<Colour>('colours.primary');

@@ -1,0 +1,3 @@
+$use template = 'static/template.jsml' as = 'body' title = 'LogicX Editor' {
+    script defer = 'true' src = './editor.js' type = 'module' []
+}

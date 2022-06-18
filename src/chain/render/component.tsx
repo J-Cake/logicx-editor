@@ -1,8 +1,8 @@
 import React from 'react';
-import { chain as _ } from 'lodash';
+import {chain as _} from 'lodash';
 
-import type { Colour } from '../../../core/ext/ThemeManager';
-import { StateMgr } from '../ext';
+import type {Colour} from '../../../core/ext/ThemeManager';
+import {StateMgr} from '../ext';
 
 export interface ComponentProps {
     inputs: { [key in string]: boolean },
@@ -12,11 +12,11 @@ export interface ComponentProps {
     label?: string,
     debugTarget?: boolean,
 
-    onActivate?: () => void
+    onActivate?: () => void,
+    selected?: boolean,
 }
 
 export default class RenderComponent extends React.Component<ComponentProps, ComponentProps> {
-
     constructor(props: ComponentProps) {
         super(props);
 
@@ -32,12 +32,14 @@ export default class RenderComponent extends React.Component<ComponentProps, Com
             return [Math.floor(this.state.pos[0] / state.gridSize) * state.gridSize, Math.floor(this.state.pos[1] / state.gridSize) * state.gridSize];
         else return this.state.pos;
     }
-    
+
     render() {
-        const { getValue, gridSize } = StateMgr.get();
+        const {getValue, gridSize} = StateMgr.get();
 
         const active = getValue<Colour>('colours.primary');
-        const base = getValue<Colour>('colours.foreground');
+        const base = this.state.selected ?
+            getValue<Colour>('colours.secondary') :
+            getValue<Colour>('colours.foreground');
         const background = getValue<Colour>('colours.background');
 
         const inputNum = Object.keys(this.state.inputs).length, outputNum = Object.keys(this.state.outputs).length;
@@ -68,20 +70,27 @@ export default class RenderComponent extends React.Component<ComponentProps, Com
             [pos.x + pos.width, Math.min(pos.y + pos.height, grid.y + gridSize * a + gridSize)],
         ].map(i => i.join(' ')).join(',');
 
-        return <g stroke={base?.stringify()} strokeWidth='1' fill={background?.stringify()} onClick={() => this.props.onActivate?.()}>
+        return <g stroke={base?.stringify()} strokeWidth='1' fill={background?.stringify()}
+                  onClick={() => StateMgr.get().extStorage.get().actions['click']?.forEach(i => i(this))}
+                  onDoubleClick={() => StateMgr.get().extStorage.get().actions['dblclick']?.forEach(i => i(this))}>
 
             <rect x={pos.x} y={pos.y} width={pos.width} height={pos.height}>e
 
-                {this.state.label && <text x={pos.x + pos.width / 2} y={pos.y + pos.height / 2} textAnchor='middle' dominantBaseline='middle'>
+                {this.state.label && <text x={pos.x + pos.width / 2} y={pos.y + pos.height / 2} textAnchor='middle'
+                                           dominantBaseline='middle'>
                     {this.state.label}
                 </text>}
 
             </rect>
 
-            {_(this.state.inputs).entries().map(([,isActive], a) => <polyline key={`input-term-${a}`} stroke={isActive ? active!.stringify() : base!.stringify()} points={ input(a) }/>).value()}
-            {_(this.state.outputs).entries().map(([,isActive], a) => <polyline key={`output-term-${a}`} stroke={isActive ? active!.stringify() : base!.stringify()} points={ output(a) }/>).value()}
+            {_(this.state.inputs).entries().map(([, isActive], a) => <polyline key={`input-term-${a}`}
+                                                                               stroke={isActive ? active!.stringify() : base!.stringify()}
+                                                                               points={input(a)}/>).value()}
+            {_(this.state.outputs).entries().map(([, isActive], a) => <polyline key={`output-term-${a}`}
+                                                                                stroke={isActive ? active!.stringify() : base!.stringify()}
+                                                                                points={output(a)}/>).value()}
 
-            {/* { this.state.inputs.map((i, a) => <polyline key={`input-term-${a}`} stroke={i[0] ? active!.stringify() : base!.stringify()} points={ input(a) }/>) }
+            {/* { this.state.inputs.map((i, a) => <polyline key={`input-term-${a}`} str5oke={i[0] ? active!.stringify() : base!.stringify()} points={ input(a) }/>) }
             { this.state.outputs.map((i, a) => <polyline key={`output-term-${a}`} stroke={i[0] ? active!.stringify() : base!.stringify()} points={ output(a) }/>) } */}
         </g>;
     }
