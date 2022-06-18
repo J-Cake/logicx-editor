@@ -10,4 +10,8 @@ export default function(extension) {
     extension.action.register('save', function() {
         console.log('saving');
     })
+
+    extension.ui.panel({ label: 'cover', icon: 'door', panel: 'right' }, function(panel) {
+
+    })
 }
