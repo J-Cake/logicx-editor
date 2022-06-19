@@ -10,7 +10,7 @@ export interface ExtensionAPI<K extends Record<string, any>> {
 
     getSymbol<T extends K[string]>(symbol: string): T | null,
 
-    getNamespace<K>(namespace: string): ExtensionAPI<K>
+    getNamespace<K extends Record<string, any>>(namespace: string): ExtensionAPI<K>
 
     require<T>(symbol: string): T,
 }
@@ -27,7 +27,7 @@ export function extensionAPI<K extends Record<string, any>>(this: { name: string
                 } else throw `Extension APIs cannot expose an object with a dot in its name`;
             },
             getSymbol: <Name extends keyof K>(symbol: Name): K[Name] => objects.has(symbol) ? objects.get(symbol) : null,
-            getNamespace: <K>(namespace: string): ExtensionAPI<K> => getApiInterface(APIs[namespace] ?? null),
+            getNamespace: <K extends Record<string, any>>(namespace: string): ExtensionAPI<K> => getApiInterface(APIs[namespace] ?? null),
             require: <T>(symbol: string): T => StateMgr.get().extensions.findAPISymbol(symbol)
         }
     }
@@ -35,7 +35,7 @@ export function extensionAPI<K extends Record<string, any>>(this: { name: string
     return getApiInterface(APIs[this.name] = new Map());
 }
 
-export interface Extension<T = any> {
+export interface Extension<T extends {} = any> {
     action: {
         invoke(name: string): void,
         getNamespace(): ActionNamespace,
@@ -63,7 +63,7 @@ export interface Extension<T = any> {
     currentTheme: <T>(path: string) => T
 }
 
-export default function Extension<T = any>(name: string, onLoad: (extension: Extension<T>) => void): Extension<T> {
+export default function Extension<T extends {} = any>(name: string, onLoad: (extension: Extension<T>) => void): Extension<T> {
     const state = StateMgr.get();
     const actionNamespace: ActionNamespace = state.actions.pushNamespace(name);
     const api = extensionAPI.bind({name: name})();

@@ -57,4 +57,6 @@ export default abstract class ChainComponent<Inputs extends string[], Outputs ex
     public static update(component: ChainComponent<any[], any[]>) {
         for (const val of component.update());
     }
+
+    protected abstract onActivate?(): void;
 }
