@@ -58,5 +58,5 @@ export default abstract class ChainComponent<Inputs extends string[], Outputs ex
         for (const val of component.update());
     }
 
-    protected abstract onActivate?(): void;
+    protected onActivate(): void {};
 }

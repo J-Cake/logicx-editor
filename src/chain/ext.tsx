@@ -44,7 +44,7 @@ export default function Ext(extension: Extension<Storage>) {
     extension.storage().setState({
         tools: ['chain.view.reset', 'chain.view.zoom-in', 'chain.view.zoom-out'],
         registeredTools: {},
-        selectedTool: 'select'
+        selectedTool: 'activate'
     });
 
     // To register tools. Each tool is named by `name: string`, and is uniquely identifiable that way. Each tool has the option to intercept each event and perform actions as necessar
@@ -86,6 +86,8 @@ export default function Ext(extension: Extension<Storage>) {
             if (selectedTool && registeredTools[selectedTool])
                 for (const i of registeredTools[selectedTool][event])
                     i(component);
+
+            viewport.current?.forceUpdate();
         }
     }).emitEvent);
 
@@ -99,29 +101,24 @@ export default function Ext(extension: Extension<Storage>) {
                     selected.delete(i);
                 else
                     selected.add(i);
-
-            viewport.current?.forceUpdate();
         },
         expand(...items: ChainComponent<any, any>[]) {
             StateMgr.get().selected.clear();
             for (const i of items)
                 StateMgr.get().selected.add(i);
-            viewport.current?.forceUpdate();
         },
         reduce(...items: ChainComponent<any, any>[]) {
             for (const i of items)
                 StateMgr.get().selected.delete(i);
-            viewport.current?.forceUpdate();
         },
         set(...items: ChainComponent<any, any>[]) {
             StateMgr.get().selected.clear();
             for (const i of items)
                 StateMgr.get().selected.add(i);
-            viewport.current?.forceUpdate();
         },
         clear() {
             StateMgr.get().selected.clear();
-            viewport.current?.forceUpdate();
+
         }
     })
 

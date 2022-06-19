@@ -29,11 +29,11 @@
         },
         "all": {
             "phony": true,
-            "dependencies": ["build/ext/theme/default.js", "build/ext/document.js", "build/ext/find-action.js", "build/ext/chain.js", "build/ext/chain_select.js", "build/editor.js"],
+            "dependencies": ["build/ext/theme/default.js", "build/ext/document.js", "build/ext/find-action.js", "build/ext/chain.js", "build/ext/chain_select.js", "build/ext/chain_activate.js", "build/editor.js"],
             "run": "ln -sfr static/* build/"
         },
         "build/editor.js": {
-            "dependencies": ["core/*.ts", "ui/*.ts+"],
+            "dependencies": ["core/*", "ui/*"],
             "run": [
                 "mkdir -p build",
                 "esbuild core/index.ts --outdir=build  --bundle --sourcemap --splitting --platform=browser --format=esm --loader:.lpf=file",
@@ -61,6 +61,13 @@
             "run": [
                 "mkdir -p build/ext",
                 "esbuild src/chain/tools/select.ts --outfile=build/ext/chain_select.js --bundle --sourcemap --platform=browser --format=esm --loader:.lpf=file --loader:.css=text"
+            ]
+        },
+        "build/ext/chain_activate.js": {
+            "dependencies": ["src/chain/tools/activate.ts", "build/ext/chain.js"],
+            "run": [
+                "mkdir -p build/ext",
+                "esbuild src/chain/tools/activate.ts --outfile=build/ext/chain_activate.js --bundle --sourcemap --platform=browser --format=esm --loader:.lpf=file --loader:.css=text"
             ]
         }
     }

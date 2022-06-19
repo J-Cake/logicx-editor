@@ -24,8 +24,6 @@ export default async function Ext(extension: Extension<{}>) {
         emit?.('select', target);
     });
 
-    // const chain = ;
-
     extension.action.register('select-all', () => console.warn('Not implemented yet'), "Select All")
     extension.action.register('select-none', () => select?.clear(), "Select None")
 
