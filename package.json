@@ -3,19 +3,22 @@
     "version": "2.0.1",
     "type":"module",
     "scripts": {
-
+        "build:all": "$npm_execpath exec mkjson build/ext/theme/default.js build/ext/document.js build/ext/overview.js build/ext/find-action.js build/ext/chain.js build/ext/chain_select.js build/ext/chain_activate.js build/editor.js",
+        "serve": "$npm_execpath exec nhp build -p 2560 --error 404 static/404.md --markdown static/md.jsml"
     },
     "dependencies": {
         "react": "latest",
         "react-dom": "latest",
         "mousetrap": "latest",
-        "lodash": "latest"
+        "lodash": "latest",
+        "jquery": "latest"
     },
     "devDependencies": {
         "@types/react": "latest",
         "@types/react-dom": "latest",
         "@types/mousetrap": "latest",
         "@types/lodash": "latest",
+        "@j-cake/jcake-utils": "latest",
         "@j-cake/mkjson": "latest",
         "@j-cake/jstempl": "latest",
         "chalk": "latest",

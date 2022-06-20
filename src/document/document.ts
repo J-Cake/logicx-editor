@@ -8,8 +8,11 @@ export default class Document {
     public readonly apiComponent: GenericComponent[] = [];
     public readonly wires: Wire[] = [];
 
-    protected constructor(public readonly token: string, doc: ApiDocument) {
+    protected constructor(public readonly token: string, private readonly apiDoc: ApiDocument) {
 
+    }
+
+    async save(): Promise<void> {
     }
 
     static async load(token: string): Promise<Document> {

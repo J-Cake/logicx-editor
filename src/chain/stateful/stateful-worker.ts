@@ -1,0 +1,1 @@
+import * as msg from '@j-cake/jcake-utils/msg';

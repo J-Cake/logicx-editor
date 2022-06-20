@@ -20,7 +20,9 @@ export default class BlankDocument extends Document {
             label: 'A',
             position: [0, 0],
             token: 'a',
-            wires: {},
+            wires: {
+                
+            },
             outputs: {}
         }, {
             direction: 0,
@@ -75,8 +77,6 @@ export default class BlankDocument extends Document {
             constructor() {
                 super(['a', 'b'], ['and']);
             }
-
-            onActivate = void 0;
         }
         const inputs = [new Input(), new Input()];
         and.addInput(inputs[0], 'input', 'a');
