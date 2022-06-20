@@ -13,13 +13,13 @@ export default class ComponentType extends React.Component<ComponentTypeProps, C
     render() {
         return <div>
             <Collapsible heading="Stateless">
-                
+                Hello World
             </Collapsible>
             <Collapsible heading="Stateful">
-                
+                Hi World
             </Collapsible>
             <Collapsible heading="Dynamic">
-                
+                Hello Again
             </Collapsible>
         </div>
     }
