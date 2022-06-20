@@ -22,3 +22,35 @@ ul.tree li.tree-item::marker {
 ul.tree li.tree-item.expanded::marker {
     content: '';
 }
+
+/* Custom Widget Styles */
+
+.dropdown-container {
+    display: grid;
+    grid-template-rows: auto 1fr;
+}
+
+.dropdown-container .dropdown-header {
+    grid-row: 1;
+}
+.dropdown-container .dropdown-option-list {
+    display: inline;
+    position: relative;
+    cursor: pointer;
+}
+.dropdown-container .dropdown-option-list .dropdown-expanded-options:focus-within, .dropdown-container .dropdown-option-list .dropdown-expanded-options:focus {
+    display: block;
+    width: auto;
+    opacity: 1;
+}
+.dropdown-container .dropdown-option-list .dropdown-expanded-options {
+    position: fixed;
+    width: 0;
+    opacity: 0;
+}
+.dropdown-container .dropdown-option-list .dropdown-expanded-options > * {
+    display: block;
+}
+.dropdown-container .dropdown-viewbox {
+    grid-row: 2;
+}

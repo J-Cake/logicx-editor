@@ -3,7 +3,7 @@
     "version": "2.0.1",
     "type":"module",
     "scripts": {
-        "build:all": "$npm_execpath exec mkjson build/ext/theme/default.js build/ext/document.js build/ext/overview.js build/ext/find-action.js build/ext/chain.js build/ext/chain_select.js build/ext/chain_activate.js build/editor.js",
+        "build:all": "$npm_execpath exec mkjson -B build/ext/theme/default.js build/ext/document.js build/ext/overview.js build/ext/find-action.js build/ext/chain.js build/ext/chain_select.js build/ext/chain_activate.js build/editor.js",
         "serve": "$npm_execpath exec nhp build -p 2560 --error 404 static/404.md --markdown static/md.jsml"
     },
     "dependencies": {
@@ -50,6 +50,10 @@
         "build/ext/document.js": {
             "dependencies": ["src/document/*.ts+", "build/editor.js"],
             "run": "esbuild src/document/ext.tsx --outfile=build/ext/document.js --bundle --sourcemap --platform=browser --format=esm --loader:.lpf=file"
+        },
+        "build/ext/overview.js": {
+            "dependencies": ["src/overview/*.ts+", "build/editor.js"],
+            "run": "esbuild src/overview/ext.tsx --outfile=build/ext/overview.js --bundle --sourcemap --platform=browser --format=esm --loader:.lpf=file"
         },
         "build/ext/find-action.js": {
             "dependencies": ["src/ui/find-action.jsx", "build/editor.js"],
