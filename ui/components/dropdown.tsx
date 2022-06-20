@@ -77,6 +77,7 @@ export default class Dropdown<T extends string> extends React.Component<Dropdown
                 <div className="dropdown-option-list"
                     tabIndex={0}
                     onKeyUp={e => this.changeFocus(e)}
+                    onClick={() => this.state.refs[this.state.active].current?.focus()}
                     ref={this.state.widget}
                     onBlur={() => this.setState({ focused: null })}>
 

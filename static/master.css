@@ -38,14 +38,18 @@ ul.tree li.tree-item.expanded::marker {
     position: relative;
     cursor: pointer;
 }
-.dropdown-container .dropdown-option-list .dropdown-expanded-options:focus-within, .dropdown-container .dropdown-option-list .dropdown-expanded-options:focus {
+.dropdown-container .dropdown-option-list .dropdown-expanded-options:focus-within {
     display: block;
+    pointer-events: all;
     width: auto;
+    height: auto;
     opacity: 1;
 }
 .dropdown-container .dropdown-option-list .dropdown-expanded-options {
     position: fixed;
+    pointer-events: none;
     width: 0;
+    height:0;
     opacity: 0;
 }
 .dropdown-container .dropdown-option-list .dropdown-expanded-options > * {
