@@ -19,7 +19,7 @@ export default class Tree extends React.Component<Props, State> {
     render() {
         return <ul className='tree logicx-widget'>
             {this.state.list.map((i, a) => <li className={`tree-item logicx-widget ${i.collapsed ? 'collapsed' : 'expanded'}`} key={`tree-item${i.heading}`}>
-                <label>
+                <label> {/*TODO: Change to tabindex based aproach*/}
                     <input type="checkbox" checked={!this.state.list[a].collapsed} onChange={() => this.setState(prev => ({
                         list: [...prev.list.slice(0, a), { ...prev.list[a], collapsed: !prev.list[a].collapsed }, ...prev.list.slice(a + 1)]
                     }))} />

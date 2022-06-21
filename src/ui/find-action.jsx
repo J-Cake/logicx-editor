@@ -29,7 +29,7 @@ export default function (extension) {
 
         render() {
             return <div>
-                <input type="text" placeholder="filter" focused="true" value={this.state.search} onChange={target => this.setSearch(target)} />
+                <input className="logicx-control text" type="text" placeholder="filter" focused="true" value={this.state.search} onChange={target => this.setSearch(target)} />
 
                 {this.list(extension.action.listAll())}
             </div>;

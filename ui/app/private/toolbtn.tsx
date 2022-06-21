@@ -12,7 +12,7 @@ export default function ToolBtn(props: { action: ActionItem | string }) {
 
         return <button
             key={`toolbar-action-${action.name}`}
-            className="toolbar-button logicx-widget"
+            className="toolbar-button logicx-control"
             onClick={() => StateMgr.get().actions.invokeAction(action.name)}
             disabled={!action.enabled}>
             <span className="logicx-icon">{action.icon}</span>

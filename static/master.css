@@ -1,4 +1,5 @@
-:root, body {
+:root,
+body {
     margin: 0;
     padding: 0;
 
@@ -6,6 +7,8 @@
     --toolbar-size: 48px;
     --panel-left-size: 365px;
     --panel-right-size: 256px;
+
+    --inactive: brightness(0.8) contrast(0.6);
 }
 
 body {
@@ -14,47 +17,127 @@ body {
     font: var(--theme-font-size) var(--theme-font-family);
 }
 
-ul.tree li.tree-item::marker {
-    content: '';
-    font-family: 'remixicon';
-}
+/* # Custom Widget Styles */
 
-ul.tree li.tree-item.expanded::marker {
-    content: '';
-}
+/* General Styling for widgets that shouldn't be theme-adjustable */
 
-/* Custom Widget Styles */
+/* ## Dropdowns */
 
-.dropdown-container {
+.logicx-widget.dropdown-container {
     display: grid;
     grid-template-rows: auto 1fr;
 }
 
-.dropdown-container .dropdown-header {
+.logicx-widget.dropdown-container .dropdown-header {
     grid-row: 1;
 }
-.dropdown-container .dropdown-option-list {
+
+.logicx-widget.dropdown-container .dropdown-option-list {
     display: inline;
     position: relative;
     cursor: pointer;
 }
-.dropdown-container .dropdown-option-list .dropdown-expanded-options:focus-within {
+
+.logicx-widget.dropdown-container .dropdown-option-list .dropdown-expanded-options:focus-within {
     display: block;
     pointer-events: all;
     width: auto;
     height: auto;
     opacity: 1;
 }
-.dropdown-container .dropdown-option-list .dropdown-expanded-options {
+
+.logicx-widget.dropdown-container .dropdown-option-list .dropdown-expanded-options {
     position: fixed;
     pointer-events: none;
     width: 0;
-    height:0;
+    height: 0;
     opacity: 0;
 }
-.dropdown-container .dropdown-option-list .dropdown-expanded-options > * {
+
+.logicx-widget.dropdown-container .dropdown-option-list .dropdown-expanded-options>* {
     display: block;
 }
-.dropdown-container .dropdown-viewbox {
+
+.logicx-widget.dropdown-container .dropdown-viewbox {
     grid-row: 2;
+}
+
+/* Tabs */
+.logicx-widget.tab-container .tab-header {
+    display: flex;
+    flex-direction: row;
+}
+
+.logicx-widget.tab-container .tab-header .tab {
+    flex: 1;
+    max-width: 180px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin-left: 0;
+    margin-right: 0;
+    padding: var(--theme-padding);
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+.logicx-widget.tab-container .tab-header .tab:not(.active) {
+    filter: var(--inactive);
+}
+
+.logicx-widget.tab-container .tab-header .logicx-control.tab input[type="radio"], .logicx-widget.tree .logicx-widget.tree-item input[type="checkbox"] {
+    position: fixed;
+    width: 0;
+    height: 0;
+    opacity: 0;
+}
+
+/* ## Tree */
+
+ul.logicx-widget.tree {
+    display: block;
+    list-style-type: none;
+    padding: 0;
+}
+
+.logicx-widget.tree .logicx-widget.tree-item, .logicx-widget.tree .logicx-widget.tree-item label {
+    width: 100%;
+    line-height: 2em;
+}
+
+.logicx-widget.tree div {
+    padding-left: 24px;
+}
+
+.logicx-widget.tree .logicx-widget.tree-item::before {
+    content: '';
+    font-family: 'remixicon';
+    display: inline-block;
+    width: var(--statusbar-size);
+    text-align: center;
+}
+
+/* # Custom Control Styles */
+
+/* ## Buttons */
+
+.toolbar.left .logicx-control.toolbar-button, .toolbar.right .logicx-control.toolbar-button {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    height: var(--toolbar-size);
+    display: inline;
+    min-width: calc(var(--toolbar-size) * 2.5);
+    max-width: calc(var(--toolbar-size) * 2.5);
+}
+
+.toolbar.left .logicx-control.toolbar-button {
+    rotate: -90deg;
+}
+.toolbar.right .logicx-control.toolbar-button {
+    rotate: 90deg;
+}
+
+.logicx-control.toolbar-button:hover {
+    filter: brightness(1.05) contrast(1.05);
 }

@@ -1,3 +1,7 @@
+* {
+    /* box-sizing: border-box !important; */
+}
+
 #interface {
     display: grid;
     width: 100vw;
@@ -9,7 +13,7 @@
     grid-template-rows: var(--toolbar-size) 1fr var(--statusbar-size);
     grid-template-columns: var(--toolbar-size) var(--panel-left-size) 1fr var(--panel-right-size) var(--toolbar-size);
 
-    grid-template-areas: 'toolbar-top toolbar-top toolbar-top toolbar-top toolbar' 'toolbar-left panel-left viewport panel-right toolbar-right' 'statusbar statusbar statusbar statusbar statusbar';
+    grid-template-areas: 'toolbar-top toolbar-top toolbar-top toolbar-top toolbar''toolbar-left panel-left viewport panel-right toolbar-right''statusbar statusbar statusbar statusbar statusbar';
 }
 
 #viewport {
@@ -17,13 +21,50 @@
     overflow: hidden;
 }
 
-.panel.left { grid-area: panel-left; overflow: auto; }
-.panel.right { grid-area: panel-right; overflow: auto; }
+.panel.left {
+    grid-area: panel-left;
+    overflow: auto;
+}
+
+.panel.right {
+    grid-area: panel-right;
+    overflow: auto;
+}
 
 #statusbar {
     grid-area: statusbar;
 }
 
-.toolbar.top { grid-area: toolbar-top; overflow: hidden; }
-.toolbar.left { grid-area: toolbar-left; overflow: hidden; }
-.toolbar.right { grid-area: toolbar-right; overflow: hidden; }
+.toolbar.top {
+    grid-area: toolbar-top;
+    overflow: hidden;
+}
+
+.toolbar.left {
+    grid-area: toolbar-left;
+    overflow: hidden;
+    /* flex-direction: column; */
+    justify-content: space-around;
+    flex-flow: column nowrap;
+    overflow-y: auto;
+}
+
+.toolbar.right {
+    grid-area: toolbar-right;
+    overflow: hidden;
+    /* flex-direction: column; */
+    justify-content: space-around;
+    flex-flow: column nowrap;
+    overflow-y: auto;
+}
+
+.toolbar {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    /* align-items: stretch; */
+}
+
+.logicx-control {
+    /* margin: 4px; */
+}

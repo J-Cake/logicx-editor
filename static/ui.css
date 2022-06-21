@@ -4,16 +4,17 @@ Any styles defined here are controlled by theme values.
 */
 
 /* common */
-.logicx-widget {
+.logicx-control {
     display: block;
     position: relative;
-    
     font: var(--theme-font-size) var(--theme-font-family);
-    margin: var(--theme-margin);
-
-    background: var(--theme-primary);
-    border: var(--theme-border-weight) solid var(--theme-border-colour);
-    border-radius: var(--theme-border-radius);
+    --colour: var(--theme-font-colour);
+    --padding: var(--theme-padding);
+    --background: var(--theme-primary);
+    border: none;
+    --border: var(--theme-border-weight) solid var(--theme-border-colour);
+    --border-radius: var(--theme-border-radius);
+    cursor: pointer;
 }
 
 .button {}
@@ -29,3 +30,19 @@ Any styles defined here are controlled by theme values.
 
 .single-line {}
 .multi-line {}
+
+.tab {
+    border-bottom: var(--border);
+}
+
+.toolbar-button {
+    background: var(--background);
+    color: var(--colour);
+}
+
+.text {
+    color: var(--colour);
+    padding: var(--padding);
+    border-bottom: var(--border);
+    background: transparent;
+}

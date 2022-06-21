@@ -25,7 +25,7 @@ export interface Theme {
         weight: number,
         apply?: 'top' | 'bottom' | 'left' | 'right' | 'vertical' | 'horizontal' | 'all' | 'none'
     },
-    margin: number
+    padding: number
 }
 
 const isColour = (colour: any): colour is Colour => Array.isArray(colour) && (colour.length === 3 || colour.length === 4) && 'stringify' in colour && (typeof colour['stringify'] === 'function' && /^#([a-fA-F0-9]{2}){3,4}$/.test((colour as Colour)['stringify']()));
@@ -97,7 +97,7 @@ export default class ThemeMananger {
         this.root.css('--theme-border-radius', theme.borders.radius);
         this.root.css('--theme-border-colour', theme.borders.colour[variant].stringify());
         this.root.css('--theme-border-weight', theme.borders.weight);
-        this.root.css('--theme-margin', theme.margin);
+        this.root.css('--theme-padding', theme.padding);
 
         StateMgr.broadcast('theme-change');
     }

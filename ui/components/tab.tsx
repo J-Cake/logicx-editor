@@ -15,14 +15,12 @@ export class TabContainer extends React.Component<Props> {
     }
 
     render() {
-        return <div className={`tab-container ${this.props.class?.join(' ') ?? ''}`}>
+        return <div className={`tab-container logicx-widget ${this.props.class?.join(' ') ?? ''}`}>
             <div className="tab-header">
-                {this.props.children?.map((i, a) => <div className="tab logicx-widget" key={`tab-${i.props.title}`}>
-                    <label>
-                        <input type="radio" name={this.props.group} onChange={() => this.props.onChange(a)} checked={a === this.props.activeTab}/>
-                        {i.props.title}
-                    </label>
-                </div>)}
+                {this.props.children?.map((i, a) => <label className={`tab logicx-control ${a == this.props.activeTab ? "active" : ""}`} key={`tab-${i.props.title}`}>
+                    <input type="radio" name={this.props.group} onChange={() => this.props.onChange(a)} checked={a === this.props.activeTab} />
+                    {i.props.title}
+                </label>)}
             </div>
             <div className="tab-body">
                 {this.props.children?.[this.props.activeTab]}
