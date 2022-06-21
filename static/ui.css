@@ -33,6 +33,7 @@ Any styles defined here are controlled by theme values.
 
 .tab {
     border-bottom: var(--border);
+    filter: brightness(1.15);
 }
 
 .toolbar-button {
@@ -45,4 +46,27 @@ Any styles defined here are controlled by theme values.
     padding: var(--padding);
     border-bottom: var(--border);
     background: transparent;
+}
+
+.dropdown-expanded-options {
+    background: var(--theme-background);
+}
+
+.dropdown-expanded-options .dropdown-option {
+    background: var(--theme-background);
+    color: var(--colour);
+    padding: var(--theme-padding);
+}
+
+.dropdown-expanded-options .dropdown-option:hover {
+    background: var(--theme-primary);
+}
+.dropdown-expanded-options .dropdown-option:focus {
+    background: var(--theme-secondary); 
+}
+
+.dropdown-option-list {
+    background: var(--theme-secondary);
+    padding: var(--theme-padding);
+
 }

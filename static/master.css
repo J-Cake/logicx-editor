@@ -30,12 +30,23 @@ body {
 
 .logicx-widget.dropdown-container .dropdown-header {
     grid-row: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;;
 }
 
-.logicx-widget.dropdown-container .dropdown-option-list {
-    display: inline;
+.logicx-widget.dropdown-container .dropdown-header label, .logicx-widget.dropdown-container .dropdown-option-list {
+    display: inline-block;
     position: relative;
     cursor: pointer;
+    flex: 1;
+}
+
+.logicx-widget.dropdown-container .dropdown-active:before {
+    content: '';
+    font-family: 'remixicon';
+    display: inline-block;
+    width: var(--padding);
 }
 
 .logicx-widget.dropdown-container .dropdown-option-list .dropdown-expanded-options:focus-within {
@@ -52,6 +63,11 @@ body {
     width: 0;
     height: 0;
     opacity: 0;
+    box-shadow: inset 0 0 0 1px var(--theme-border-colour), 0 0 4px 0 #000;
+}
+
+.logicx-widget.dropdown-container .dropdown-option-list .dropdown-expanded-options .dropdown-option {
+    display: block;
 }
 
 .logicx-widget.dropdown-container .dropdown-option-list .dropdown-expanded-options>* {
@@ -102,7 +118,6 @@ ul.logicx-widget.tree {
 
 .logicx-widget.tree .logicx-widget.tree-item, .logicx-widget.tree .logicx-widget.tree-item label {
     width: 100%;
-    line-height: 2em;
 }
 
 .logicx-widget.tree div {

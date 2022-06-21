@@ -3,7 +3,7 @@ export const name = "default";
 export default function (extension) {
     const colours = {
         primary: extension.util.colour(["#9bcfff", "#115c96"]),
-        secondary: extension.util.colour(["#99caff", "#434a66"]),
+        secondary: extension.util.colour(["#99caff", "#379bd1"]),
         accent: extension.util.colour(["#f44336", "#e91e63"]),
         foreground: extension.util.colour(["#413d3d", "#c3c3c8"]),
         background: extension.util.colour(["#FDFCF7", "#272c2d"]),

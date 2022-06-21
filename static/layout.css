@@ -1,5 +1,6 @@
 * {
     /* box-sizing: border-box !important; */
+    user-select: none;
 }
 
 #interface {
