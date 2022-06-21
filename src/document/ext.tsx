@@ -9,18 +9,22 @@ import Panel from './panel';
 
 export const name = 'document';
 
+export const extension: Extension<Ctx> = {} as any;
+
 export interface Ctx {
     currentDocument: Document;
 }
 
-export default function (extension: Extension<Ctx>) {
-    extension.action.register('save', function () {
+export default function (ctx: Extension<Ctx>) {
+    Object.assign(extension, ctx);
+    
+    ctx.action.register('save', function () {
         console.log('saving');
     });
 
-    extension.api().expose('on-request-document-change', (handler: (document: Document) => void) => extension.storage().on('document-change', prev => handler(prev.currentDocument)));
-    extension.api().expose('get-open-document', () => extension.storage().get().currentDocument);
-    extension.action.register('new', () => extension.storage().dispatch('document-change', { currentDocument: new BlankDocument() }));
+    ctx.api().expose('on-request-document-change', (handler: (document: Document) => void) => ctx.storage().on('document-change', prev => handler(prev.currentDocument)));
+    ctx.api().expose('get-open-document', () => ctx.storage().get().currentDocument);
+    ctx.action.register('new', () => ctx.storage().dispatch('document-change', { currentDocument: new BlankDocument() }));
 
-    extension.ui.panel({ label: 'Documents', icon: 'file', panel: 'left' }, (panel: PanelHandle) => <Panel ctx={extension} />);
+    ctx.ui.panel({ label: 'Documents', icon: 'file', panel: 'left' }, (panel: PanelHandle) => <Panel ctx={ctx} />);
 }

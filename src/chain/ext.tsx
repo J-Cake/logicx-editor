@@ -1,13 +1,17 @@
 import React from 'react';
 
-import type { Extension } from '../../core/ext/Extension';
 import StateManager from '../../core/stateManager';
+import type { Extension } from '../../core/ext/Extension';
+import type { ActionItem } from '../../core/ext/ViewportManager';
+import type Document from "../document/document";
 
 import { ComponentUserAction, Viewport, Storage } from './viewport';
 import ChainComponent from './chaincomponent';
 import ToolButton from '../../ui/components/ToolButton';
-import type { ActionItem } from '../../core/ext/ViewportManager';
-import Document from "../document/document";
+
+import Stateless from './stateless';
+import Stateful from './stateful';
+import Dynamic from './dynamic';
 
 export const name = 'chain';
 
@@ -91,7 +95,10 @@ export default function Ext(extension: Extension<Storage>) {
         }
     }).emitEvent);
 
-    extension.api().expose("visible", []);
+    extension.api().expose("document", () => StateMgr.get().document);
+    extension.api().expose("Stateless", Stateless);
+    extension.api().expose("Stateful", Stateful);
+    extension.api().expose("Dynamic", Dynamic);
 
     extension.api().expose('select', {
         toggle(...items: ChainComponent<any, any>[]) {

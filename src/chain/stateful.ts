@@ -20,6 +20,6 @@ export default abstract class Stateful<Inputs extends string[], Outputs extends 
     }
 
     protected propagate(input: ChainComponent<Inputs, Outputs>['inbound']): ChainComponent<Inputs, Outputs>['outbound'] {
-        
+        return this.prevOutput;
     }
 }

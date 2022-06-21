@@ -1,26 +1,60 @@
-import Collapsible from '../../ui/components/collapsible';
 import React from 'react';
+import _ from 'lodash';
+
+import Collapsible from '../../ui/components/collapsible';
+import Stateless from '../chain/stateless';
+import type Stateful from '../chain/stateful';
+import type Dynamic from '../chain/dynamic';
+import type Document from '../document/document';
+import Component from './Component';
+import { extension } from './ext';
 
 export interface ComponentTypeProps {
 
 }
 
-export interface ComponentTypeState {
-    
+export type Nullable<T> = T | undefined | null;
+
+const comp = {
+    stateless: null as any as typeof Stateless,
+    stateful: null as any as typeof Stateful,
+    dynamic: null as any as typeof Dynamic,
 }
 
-export default class ComponentType extends React.Component<ComponentTypeProps, ComponentTypeState> {
-    render() {
+export function getComponents(): Nullable<{ stateless: Stateless<any, any>[], stateful: Stateful<any, any>[], dynamic: Dynamic<any, any>[] }> {
+
+    const components = (extension.api().getNamespace('chain').getSymbol('document')() as Nullable<Document>)?.components;
+    
+    const Stateless = comp.stateless ??= extension.api().getNamespace('chain').getSymbol('Stateless')!;
+    const Stateful = comp.stateful ??= extension.api().getNamespace('chain').getSymbol('Stateful')!;
+    const Dynamic = comp.dynamic ??= extension.api().getNamespace('chain').getSymbol('Dynamic')!;
+
+    if (!components) return;
+
+    return _.groupBy(components, i => i instanceof Stateless ? 'stateless' : (i instanceof Stateful  ? 'stateful' : (i instanceof Dynamic ? 'dynamic' : 'unknown'))) as any;
+}
+
+export default function ComponentType(props: ComponentTypeProps) {
+    const types = getComponents();
+
+    console.log(types);
+
+    // TODO: attach to OnRequestDocumentChange event
+
+    if (types)
         return <div>
-            <Collapsible heading="Stateless">
-                Hello World
+            <Collapsible heading="Stateless" expanded={true}>
+                {types.stateless?.map((i, a) => <Component component={i} key={`stateless-${a}`} />)}
             </Collapsible>
-            <Collapsible heading="Stateful">
+            <Collapsible heading="Stateful" expanded={true}>
                 Hi World
             </Collapsible>
-            <Collapsible heading="Dynamic">
+            <Collapsible heading="Dynamic" expanded={true}>
                 Hello Again
             </Collapsible>
+        </div>;
+    else
+        return <div>
+            Open a document to inspect its components
         </div>
-    }
 }

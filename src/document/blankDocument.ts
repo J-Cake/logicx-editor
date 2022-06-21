@@ -1,6 +1,9 @@
 import ChainComponent from "../chain/chaincomponent";
-import Stateless, { TruthTable } from "../chain/stateless";
+import type Stateless from "../chain/stateless";
+import type { TruthTable } from '../chain/stateless';
+import type Dynamic from "../chain/dynamic";
 import Document from "./document";
+import { extension } from "./ext";
 
 export default class BlankDocument extends Document {
     constructor() {
@@ -47,7 +50,11 @@ export default class BlankDocument extends Document {
     }
 
     private static mkTmp(): ChainComponent<any, any>[] {
-        const Input = class extends ChainComponent<[], ['input']> {
+
+        const StatelessComponent: typeof Stateless = extension.api().getNamespace('chain').getSymbol('Stateless')!;
+        const DynamicComponent: typeof Dynamic = extension.api().getNamespace('chain').getSymbol('Dynamic')!;
+
+        const Input = class Input extends DynamicComponent<[], ['input']> {
             private value: boolean = false;
         
             constructor() {
@@ -66,7 +73,7 @@ export default class BlankDocument extends Document {
                 for (const _ of this.update());
             }
         }
-        const and = new class extends Stateless<['a', 'b'], ['and']> {
+        const And = class And extends StatelessComponent<['a', 'b'], ['and']> {
             public readonly truthTable: TruthTable<['a', 'b'], ['and']> = [
                 [{ a: false, b: false }, { and: false }],
                 [{ a: true, b: false }, { and: false }],
@@ -79,6 +86,7 @@ export default class BlankDocument extends Document {
             }
         }
         const inputs = [new Input(), new Input()];
+        const and = new And();
         and.addInput(inputs[0], 'input', 'a');
         and.addInput(inputs[1], 'input', 'b');
 
