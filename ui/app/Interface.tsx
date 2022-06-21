@@ -1,6 +1,6 @@
 import React from "react";
+import _ from 'lodash';
 
-import Panel from "./Panel";
 import StatusBar from "./StatusBar";
 import ToolBar from "./ToolBar";
 import Viewport from "./Viewport";
@@ -25,9 +25,21 @@ export default class Interface extends React.Component<{ documentId: string }> {
             <ToolBar actions={TopToolbar} position="top" />
 
             <ToolBar actions={LeftToolbar} position="left" />
-            <Panel activeTab={left_focus} position="left">{left.map(i => <Tab.TabView title={i.display} key={`panel-left-${i.display}`}>{i.content(i.handle())}</Tab.TabView>)}</Panel>
+            <Tab.TabContainer active={left[left_focus].display} className="panel left">{
+                _.chain(left)
+                    .keyBy('display')
+                    .mapValues(i => <Tab.TabView title={i.display}>
+                        {i.content(i.handle())}
+                    </Tab.TabView>)
+                    .value() as Record<string, React.ReactElement<{title: string, children: React.ReactNode}>>}</Tab.TabContainer>
             <Viewport />
-            <Panel activeTab={right_focus} position="right">{right.map(i => <Tab.TabView title={i.display} key={`panel-right-${i.display}`}>{i.content(i.handle())}</Tab.TabView>)}</Panel>
+            <Tab.TabContainer active={right[right_focus].display} className="panel right">{
+                _.chain(right)
+                    .keyBy('display')
+                    .mapValues(i => <Tab.TabView title={i.display}>
+                        {i.content(i.handle())}
+                    </Tab.TabView>)
+                    .value() as Record<string, React.ReactElement<{title: string, children: React.ReactNode}>>}</Tab.TabContainer>
             <ToolBar actions={RightToolbar} position="right" />
 
             <StatusBar />

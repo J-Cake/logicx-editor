@@ -1,6 +1,7 @@
 import React from "react";
+import _ from 'lodash';
 
-export class TabView extends React.Component<{ title: string, children: React.ReactChild[] | React.ReactChild }> {
+export class TabView extends React.Component<{ title: string, children: React.ReactNode }> {
     render() {
         return <div className="tab-view logicx-widget">
             {this.props.children}
@@ -8,23 +9,61 @@ export class TabView extends React.Component<{ title: string, children: React.Re
     }
 }
 
-type Props = { activeTab: number, children?: React.ReactElement<{ title: string }>[], class?: string[], onChange: (index: number) => void, group: string };
-export class TabContainer extends React.Component<Props> {
-    constructor(props: Props) {
+export interface TabContainerProps<T extends string> {
+    children: Record<T, React.ReactElement<{ title: string, children: React.ReactNode }>>,
+    className?: string,
+    active?: T
+}
+export interface TabContainerState<T extends string> {
+    active: T,
+    refs: Record<T, React.RefObject<HTMLDivElement>>
+}
+
+export class TabContainer<T extends string> extends React.Component<TabContainerProps<T>, TabContainerState<T>> {
+    constructor(props: TabContainerProps<T>) {
         super(props);
+
+        this.state = {
+            active: Object.keys(props.children)[0] as T,
+            refs: _.mapValues(props.children, i => React.createRef())
+        }
+    }
+
+    private changeFocus(e: React.KeyboardEvent) {
+        if (!['ArrowLeft', 'ArrowRight'].includes(e.key))
+            return;
+
+        const keys: T[] = Object.keys(this.props.children) as T[];
+        const current = keys.indexOf(this.state.active);
+
+        console.log(e.key);
+
+        const selected: T = keys[current + (e.key == 'ArrowLeft' ? -1 : 1)];
+        console.log(selected);
+        if (selected) {
+            this.setState({ active: selected });
+            this.state.refs[selected]?.current?.focus();
+        }
     }
 
     render() {
-        return <div className={`tab-container logicx-widget ${this.props.class?.join(' ') ?? ''}`}>
-            <div className="tab-header">
-                {this.props.children?.map((i, a) => <label className={`tab logicx-control ${a == this.props.activeTab ? "active" : ""}`} key={`tab-${i.props.title}`}>
-                    <input type="radio" name={this.props.group} onChange={() => this.props.onChange(a)} checked={a === this.props.activeTab} />
-                    {i.props.title}
-                </label>)}
+        return <div className={`tab-container logicx-widget ${this.props.className ?? ''}`}>
+            <div className="tab-header" tabIndex={0} onKeyUp={e => this.changeFocus(e)}>
+                {_.chain(this.state.refs)
+                    .entries()
+                    .map(([name, ref]) => <div
+                        tabIndex={-1}
+                        key={`tab-${name}`}
+                        ref={ref}
+                        onClick={() => this.setState({ active: name as T })}
+                        className={`tab logicx-control ${name == this.props.active ? 'active' : ''}`}>
+                        {name}
+                    </div>)
+                    .value()}
             </div>
             <div className="tab-body">
-                {this.props.children?.[this.props.activeTab]}
+                {this.props.children[this.state.active]}
             </div>
-        </div>;
+        </div >;
     }
 }
