@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Extension } from "../../core/ext/Extension";
 import { ApiDocument } from "../../core/api/resources";
-import ToolButton from '../../ui/components/ToolButton';
+import ToolButton from '../../ui/components/toolbtn';
 
 import { Ctx } from './ext';
 

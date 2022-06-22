@@ -1,23 +1,21 @@
-import React from "react";
+import React from 'react';
 import _ from 'lodash';
 
-export interface DropdownProps<T extends string = string> {
-    label: string;
-    children: Record<T, React.ReactNode[]>;
+export interface ComboboxProps<T extends string> {
+    children: Record<T, React.ReactNode>,
+    active?: T,
     onChange?: (key: T) => void
 }
 
-export interface DropdownState<T extends string> {
+export interface ComboboxState<T extends string> {
     active: T;
     focused: T | null;
     refs: Record<T, React.RefObject<HTMLSpanElement>>,
     widget: React.RefObject<HTMLDivElement>
 }
 
-const wrap = (x: number, max: number) => (x + max) % max;
-
-export default class Dropdown<T extends string> extends React.Component<DropdownProps<T>, DropdownState<T>> {
-    constructor(props: DropdownProps<T>) {
+export default class Combobox<T extends string> extends React.Component<ComboboxProps<T>, ComboboxState<T>> {
+    constructor(props: ComboboxProps<T>) {
         super(props);
 
         this.state = {
@@ -27,6 +25,7 @@ export default class Dropdown<T extends string> extends React.Component<Dropdown
             widget: React.createRef()
         };
     }
+
 
     private changeFocus(e: React.KeyboardEvent<HTMLDivElement>) {
         const options = Object.keys(this.props.children) as T[];
@@ -70,31 +69,24 @@ export default class Dropdown<T extends string> extends React.Component<Dropdown
     }
 
     render() {
-        return <div className="dropdown-container logicx-widget">
-            <div className="dropdown-header">
-                <label>{this.props.label}</label>
+        return <div className=".logicx-control dropdown-option-list"
+            tabIndex={0}
+            onKeyUp={e => this.changeFocus(e)}
+            onClick={() => this.state.refs[this.state.active].current?.focus()}
+            ref={this.state.widget}
+            onBlur={() => this.setState({ focused: null })}>
 
-                <div className="dropdown-option-list"
-                    tabIndex={0}
-                    onKeyUp={e => this.changeFocus(e)}
-                    onClick={() => this.state.refs[this.state.active].current?.focus()}
-                    ref={this.state.widget}
-                    onBlur={() => this.setState({ focused: null })}>
+            <label className="dropdown-active">{this.state.active}</label>
+            <div className="dropdown-expanded-options">
+                {Object.keys(this.props.children).map(key => <span
+                    ref={this.state.refs[key as T]}
+                    className="dropdown-option"
+                    tabIndex={-1}
+                    key={key}
+                    onKeyUp={e => ['Enter', ' '].includes(e.key) && this.setKey(key as T)}
+                    onClick={() => this.setKey(key as T)}>{key}</span>)}
 
-                    <label className="dropdown-active">{this.state.active}</label>
-                    <div className="dropdown-expanded-options">
-                        {Object.keys(this.props.children).map(key => <span
-                            ref={this.state.refs[key as T]}
-                            className="dropdown-option"
-                            tabIndex={-1}
-                            key={key}
-                            onKeyUp={e => ['Enter', ' '].includes(e.key) && this.setKey(key as T)}
-                            onClick={() => this.setKey(key as T)}>{key}</span>)}
-
-                    </div>
-                </div>
-            </div>
-            <div className="dropdown-viewbox">{this.props.children[this.state.active]}</div>
-        </div>
+            </div>;
+        </div>;
     }
 }

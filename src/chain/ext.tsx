@@ -7,7 +7,7 @@ import type Document from "../document/document";
 
 import { ComponentUserAction, Viewport, Storage } from './viewport';
 import ChainComponent from './chaincomponent';
-import ToolButton from '../../ui/components/ToolButton';
+import ToolButton from '../../ui/components/toolbtn';
 
 import Stateless from './stateless';
 import Stateful from './stateful';
@@ -134,6 +134,7 @@ export default function Ext(extension: Extension<Storage>) {
     extension.ui.viewport(function (parent) {
         return <section id="document-editor">
             <div className={`toolbar top`}>
+
                 {extension.storage().get().tools?.map((i: string) => extension.action.details(i)!).filter((i: ActionItem | null) => i).map((i: ActionItem, a: number) =>
                     <ToolButton key={Math.random()} action={i} onClick={() => i.invoke()} />)}
             </div>

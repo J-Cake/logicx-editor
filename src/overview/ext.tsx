@@ -1,7 +1,7 @@
 import React from 'react';
 
 import type { Extension } from "../../core/ext/Extension";
-import Dropdown from '../../ui/components/dropdown';
+import Dropdown from '../../ui/components/dropdown-view';
 
 import ComponentType from './ComponentType';
 import Flat from './Flat';
