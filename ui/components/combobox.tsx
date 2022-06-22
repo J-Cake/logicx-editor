@@ -2,7 +2,7 @@ import React from 'react';
 import _ from 'lodash';
 
 export interface ComboboxProps<T extends string> {
-    children: Record<T, React.ReactNode>,
+    children: T[],
     active?: T,
     onChange?: (key: T) => void
 }
@@ -19,39 +19,42 @@ export default class Combobox<T extends string> extends React.Component<Combobox
         super(props);
 
         this.state = {
-            active: Object.keys(props.children)[0] as T,
-            focused: Object.keys(props.children)[0] as T,
-            refs: _.mapValues(props.children, i => React.createRef()),
+            active: props.children[0] as T,
+            focused: props.children[0] as T,
+            refs: _.chain(props.children)
+                .map(i => [i, React.createRef<HTMLSpanElement>()])
+                .fromPairs()
+                .value() as any,
+            // refs: _.mapValues(props.children, i => React.createRef()),
             widget: React.createRef()
         };
     }
 
 
     private changeFocus(e: React.KeyboardEvent<HTMLDivElement>) {
-        const options = Object.keys(this.props.children) as T[];
-        const index = this.state.focused ? options.indexOf(this.state.focused) : -1;
+        const index = this.state.focused ? this.props.children.indexOf(this.state.focused) : -1;
 
         e.preventDefault();
 
         if (!['ArrowUp', 'ArrowDown'].includes(e.key))
             if (['Enter', ' '].includes(e.key)) {
-                this.state.refs[options[0]].current?.focus();
+                this.state.refs[this.props.children[0]].current?.focus();
                 this.setState({
-                    focused: options[0]
+                    focused: this.props.children[0]
                 });
                 return;
             } else
                 return;
 
         if (index <= -1) {
-            this.state.refs[options[0]].current?.focus();
+            this.state.refs[this.props.children[0]].current?.focus();
             this.setState({
-                focused: options[0]
+                focused: this.props.children[0]
             });
             return;
         }
 
-        const newFocus = options[index + (e.key === 'ArrowUp' ? -1 : 1)];
+        const newFocus = this.props.children[index + (e.key === 'ArrowUp' ? -1 : 1)];
 
         if (newFocus && this.state.refs[newFocus]?.current) {
             this.state.refs[newFocus]?.current?.focus();
@@ -69,7 +72,7 @@ export default class Combobox<T extends string> extends React.Component<Combobox
     }
 
     render() {
-        return <div className=".logicx-control dropdown-option-list"
+        return <div className="logicx-control dropdown-option-list"
             tabIndex={0}
             onKeyUp={e => this.changeFocus(e)}
             onClick={() => this.state.refs[this.state.active].current?.focus()}
@@ -78,7 +81,7 @@ export default class Combobox<T extends string> extends React.Component<Combobox
 
             <label className="dropdown-active">{this.state.active}</label>
             <div className="dropdown-expanded-options">
-                {Object.keys(this.props.children).map(key => <span
+                {this.props.children.map(key => <span
                     ref={this.state.refs[key as T]}
                     className="dropdown-option"
                     tabIndex={-1}
@@ -86,7 +89,7 @@ export default class Combobox<T extends string> extends React.Component<Combobox
                     onKeyUp={e => ['Enter', ' '].includes(e.key) && this.setKey(key as T)}
                     onClick={() => this.setKey(key as T)}>{key}</span>)}
 
-            </div>;
+            </div>
         </div>;
     }
 }

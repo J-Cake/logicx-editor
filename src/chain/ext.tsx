@@ -8,10 +8,12 @@ import type Document from "../document/document";
 import { ComponentUserAction, Viewport, Storage } from './viewport';
 import ChainComponent from './chaincomponent';
 import ToolButton from '../../ui/components/toolbtn';
+import Combobox from '../../ui/components/combobox';
 
 import Stateless from './stateless';
 import Stateful from './stateful';
 import Dynamic from './dynamic';
+import _ from 'lodash';
 
 export const name = 'chain';
 
@@ -134,6 +136,8 @@ export default function Ext(extension: Extension<Storage>) {
     extension.ui.viewport(function (parent) {
         return <section id="document-editor">
             <div className={`toolbar top`}>
+
+                <Combobox onChange={tool => extension.storage().dispatch('change-tool', { selectedTool: tool })}>{Object.keys(extension.storage().get().registeredTools)}</Combobox>
 
                 {extension.storage().get().tools?.map((i: string) => extension.action.details(i)!).filter((i: ActionItem | null) => i).map((i: ActionItem, a: number) =>
                     <ToolButton key={Math.random()} action={i} onClick={() => i.invoke()} />)}

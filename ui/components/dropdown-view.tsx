@@ -26,7 +26,7 @@ export default class Dropdown<T extends string> extends React.Component<Dropdown
             <div className="dropdown-header">
                 <label>{this.props.label}</label>
 
-                <Combobox onChange={active => this.setState({ active })}>{this.props.children}</Combobox>
+                <Combobox onChange={active => this.setState({ active })}>{Object.keys(this.props.children) as T[]}</Combobox>
             </div>
             <div className="dropdown-viewbox">{this.props.children[this.state.active]}</div>
         </div>
