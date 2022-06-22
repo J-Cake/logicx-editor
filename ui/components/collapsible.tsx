@@ -22,13 +22,11 @@ export default class Collapsible extends React.Component<CollapsibleProps, Colla
 
     render() {
         return <div className="logicx-widget collapsible-container">
-            <div className="logicx-widget collapsible-header"
+            <div className={`logicx-widget collapsible-header ${this.state.expanded ? 'expanded' : ''}`}
                 tabIndex={0}
                 onKeyUp={e => ['Enter', ' '].includes(e.key) && this.setState({ expanded: !this.state.expanded })}
                 onClick={() => this.setState({ expanded: !this.state.expanded })}>
-                    
-                <input type="checkbox" checked={this.state.expanded} onChange={e => this.setState({ expanded: e.target.checked })} />
-                <label>{this.props.heading}</label>
+                {this.props.heading}
             </div>
             <div className="collapsible-body">{this.state.expanded ? this.props.children : null}</div>
         </div>

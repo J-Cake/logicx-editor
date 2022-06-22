@@ -24,7 +24,7 @@ export class TabContainer<T extends string> extends React.Component<TabContainer
         super(props);
 
         this.state = {
-            active: Object.keys(props.children)[0] as T,
+            active: this.props.active ?? Object.keys(props.children)[0] as T,
             refs: _.mapValues(props.children, i => React.createRef())
         }
     }
@@ -56,7 +56,7 @@ export class TabContainer<T extends string> extends React.Component<TabContainer
                         key={`tab-${name}`}
                         ref={ref}
                         onClick={() => this.setState({ active: name as T })}
-                        className={`tab logicx-control ${name == this.props.active ? 'active' : ''}`}>
+                        className={`tab logicx-control ${name == this.state.active ? 'active' : ''}`}>
                         {name}
                     </div>)
                     .value()}

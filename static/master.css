@@ -101,16 +101,9 @@ body {
     filter: var(--inactive);
 }
 
-.logicx-widget.tab-container .tab-header .logicx-control.tab input[type="radio"], .logicx-widget.tree .logicx-widget.tree-item input[type="checkbox"] {
-    position: fixed;
-    width: 0;
-    height: 0;
-    opacity: 0;
-}
-
 /* ## Tree */
 
-ul.logicx-widget.tree {
+.logicx-widget.tree {
     display: block;
     list-style-type: none;
     padding: 0;
@@ -121,7 +114,7 @@ ul.logicx-widget.tree {
 }
 
 .logicx-widget.tree div {
-    padding-left: 24px;
+    padding-left: 8px;
 }
 
 .logicx-widget.tree .logicx-widget.tree-item::before {

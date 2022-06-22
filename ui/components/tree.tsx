@@ -5,7 +5,7 @@ export function TreeNode(props: { heading: string, children: React.ReactNode, on
 }
 
 type Props = { children: React.ReactElement<{ heading: string }>[] };
-type State = { list: { heading: string, collapsed: boolean, body: React.ReactElement<{ heading: string }>, ref: React.RefObject<HTMLDivElement> }[], active: number };
+type State = { list: { heading: string, collapsed: boolean, body: React.ReactElement<{ heading: string }>, ref: React.RefObject<HTMLLabelElement> }[], active: number };
 export default class Tree extends React.Component<Props, State> {
 
     state: State = { list: [], active: 0 };
@@ -47,14 +47,14 @@ export default class Tree extends React.Component<Props, State> {
     // }
 
     render() {
-        return <ul className='tree logicx-widget'> {/* tabIndex={0} onKeyUp={e => this.changeFocus(e.key)} onBlur={() => this.setState({ active: -1 })} */}
-             {this.state.list.map((i, a) => <li className={`tree-item logicx-widget ${i.collapsed ? 'collapsed' : 'expanded'}`} key={`tree-item${i.heading}`}>
-                <div tabIndex={0} ref={this.state.list[a].ref!} onClick={() => this.onChange(a)} onKeyUp={e => ['Enter', ' '].includes(e.key) && this.onChange(a)}>{i.heading}</div>
+        return <div className='tree logicx-widget'> {/* tabIndex={0} onKeyUp={e => this.changeFocus(e.key)} onBlur={() => this.setState({ active: -1 })} */}
+             {this.state.list.map((i, a) => <div className={`tree-item logicx-widget ${i.collapsed ? 'collapsed' : 'expanded'}`} key={`tree-item${i.heading}`}>
+                <label tabIndex={0} ref={this.state.list[a].ref!} onClick={() => this.onChange(a)} onKeyUp={e => ['Enter', ' '].includes(e.key) && this.onChange(a)}>{i.heading}</label>
 
                 <div>
                     {i.collapsed ? null : i.body}
                 </div>
-            </li>)}
-        </ul>;
+            </div>)}
+        </div>;
     }
 }
