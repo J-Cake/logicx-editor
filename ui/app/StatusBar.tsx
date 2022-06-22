@@ -1,9 +1,20 @@
 import React from 'react';
 
-export default class StatusBar extends React.Component {
+import { StatusItemProps } from "./private/status";
+
+export interface StatusBarProps {
+    children: {
+        left: React.ReactElement<StatusItemProps>[],
+        right: React.ReactElement<StatusItemProps>[]
+    }
+}
+
+export default class StatusBar extends React.Component<StatusBarProps> {
     render() {
         return <div id="statusbar">
-            StatusBar
+            {this.props.children.left}
+            <span className='spacer' />
+            {this.props.children.right}
         </div>;
     }
 }

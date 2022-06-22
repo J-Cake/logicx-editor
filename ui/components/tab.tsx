@@ -12,7 +12,7 @@ export class TabView extends React.Component<{ title: string, children: React.Re
 export interface TabContainerProps<T extends string> {
     children: Record<T, React.ReactElement<{ title: string, children: React.ReactNode }>>,
     className?: string,
-    active?: T
+    active?: T,
 }
 export interface TabContainerState<T extends string> {
     active: T,

@@ -16,6 +16,12 @@ type PanelItem = {
     handle: () => PanelHandle
 };
 
+type StatusbarItem = {
+    icon?: string,
+    display: string,
+    content: () => JSX.Element
+};
+
 export type ActionItem = {
     name: string,
     friendly?: string,
@@ -26,15 +32,17 @@ export type ActionItem = {
 };
 
 interface ViewportManagerState {
-    left: PanelItem[], 
-    right: PanelItem[], 
-    left_focus: number, 
-    right_focus: number, 
+    left: PanelItem[],
+    right: PanelItem[],
+    left_focus: number,
+    right_focus: number,
     viewport: (parent: JQuery) => JSX.Element,
 
     LeftToolbar: ActionItem[],
     RightToolbar: ActionItem[],
     TopToolbar: ActionItem[],
+
+    Statusbar: { left: StatusbarItem[], right: StatusbarItem[] };
 }
 
 export default class ViewportManager extends StateManager<ViewportManagerState> {
@@ -47,7 +55,11 @@ export default class ViewportManager extends StateManager<ViewportManagerState> 
 
             TopToolbar: [],
             LeftToolbar: [],
-            RightToolbar: []
+            RightToolbar: [],
+            Statusbar: {
+                left: [],
+                right: []
+            }
         });
     }
 

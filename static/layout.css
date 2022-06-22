@@ -12,9 +12,19 @@
     overflow: hidden;
 
     grid-template-rows: var(--toolbar-size) 1fr var(--statusbar-size);
-    grid-template-columns: var(--toolbar-size) var(--panel-left-size) 1fr var(--panel-right-size) var(--toolbar-size);
+    grid-template-columns: var(--toolbar-size) var(--panel-left-size) auto 1fr auto var(--panel-right-size) var(--toolbar-size);
 
-    grid-template-areas: 'toolbar-top toolbar-top toolbar-top toolbar-top toolbar''toolbar-left panel-left viewport panel-right toolbar-right''statusbar statusbar statusbar statusbar statusbar';
+    grid-template-areas: 'toolbar-top toolbar-top toolbar-top toolbar-top toolbar-top toolbar-top toolbar''toolbar-left panel-left splitter-left viewport splitter-right panel-right toolbar-right''statusbar statusbar statusbar statusbar statusbar statusbar statusbar';
+}
+
+#interface:not(.panel-left).panel-right {
+    grid-template-areas: 'toolbar-top toolbar-top toolbar-top toolbar-top toolbar-top toolbar-top toolbar''toolbar-left viewport viewport viewport splitter-right panel-right toolbar-right''statusbar statusbar statusbar statusbar statusbar statusbar statusbar';
+}
+#interface.panel-left:not(.panel-right) {
+    grid-template-areas: 'toolbar-top toolbar-top toolbar-top toolbar-top toolbar-top toolbar-top toolbar''toolbar-left panel-left splitter-left viewport viewport viewport toolbar-right''statusbar statusbar statusbar statusbar statusbar statusbar statusbar';
+}
+#interface:not(.panel-left):not(.panel-right) {
+    grid-template-areas: 'toolbar-top toolbar-top toolbar-top toolbar-top toolbar-top toolbar-top toolbar''toolbar-left viewport viewport viewport viewport viewport toolbar-right''statusbar statusbar statusbar statusbar statusbar statusbar statusbar';
 }
 
 #viewport {
@@ -27,6 +37,14 @@
     overflow: auto;
 }
 
+.splitter {
+    grid-area: splitter-right;
+}
+
+.panel.left + .splitter {
+    grid-area: splitter-left;
+}
+
 .panel.right {
     grid-area: panel-right;
     overflow: auto;
@@ -34,6 +52,11 @@
 
 #statusbar {
     grid-area: statusbar;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    height: var(--statusbar-size);
 }
 
 .toolbar.top {
@@ -68,4 +91,16 @@
 
 .logicx-control {
     /* margin: 4px; */
+}
+
+#statusbar .spacer {
+    flex: 1;
+    display: block;
+    width: auto;
+}
+
+#statusbar .status-item {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
 }

@@ -3,8 +3,31 @@ This file is responsible only for theme-adjustable properties
 Any styles defined here are controlled by theme values.
 */
 
+/* System */
+
+#statusbar {
+    background: var(--theme-primary);
+}
+
+#statusbar .status-item .icon,
+#statusbar .status-item .icon {
+    text-align: center;
+    min-width: var(--toolbar-size);
+    max-width: var(--toolbar-size);
+}
+
+#statusbar .status-item,
+#statusbar .status-item {
+    height: var(--statusbar-size);
+    background: var(--theme-primary);
+}
+
+#viewport {
+    background: var(--background);
+}
+
 /* common */
-.logicx-control {
+.logicx-control, button, input {
     display: block;
     position: relative;
     font: var(--theme-font-size) var(--theme-font-family);
@@ -13,32 +36,37 @@ Any styles defined here are controlled by theme values.
     --background: var(--theme-primary);
     border: none;
     --border: var(--theme-border-weight) solid var(--theme-border-colour);
-    --border-radius: var(--theme-border-radius);
+    border-radius: var(--theme-border-radius);
     cursor: pointer;
 }
-
-.button {}
 
 .checkbox {
     background: var(--background);
     padding: var(--theme-margin);
 }
+
 .checkbox .checkbox-inner {}
 
 .radio {}
+
 .radio .radio-inner {}
 
 .single-line {}
+
 .multi-line {}
 
 .tab {
     border-bottom: var(--border);
-    filter: brightness(1.15);
+    background: var(--theme-background);
 }
 
-.toolbar-button {
+.toolbar-button, button {
     background: var(--background);
     color: var(--colour);
+}
+
+button {
+    padding: var(--theme-padding);
 }
 
 .text {
@@ -49,24 +77,26 @@ Any styles defined here are controlled by theme values.
 }
 
 .dropdown-expanded-options {
-    background: var(--theme-background);
+    background: var(--theme-primary);
+    border-radius: var(--theme-border-radius);
+    overflow: hidden;
 }
 
 .dropdown-expanded-options .dropdown-option {
-    background: var(--theme-background);
     color: var(--colour);
     padding: var(--theme-padding);
+    background: var(--theme-background);
 }
 
 .dropdown-expanded-options .dropdown-option:hover {
-    background: var(--theme-primary);
+    background: var(--theme-accent);
 }
+
 .dropdown-expanded-options .dropdown-option:focus {
-    background: var(--theme-secondary); 
+    background: var(--theme-accent);
 }
 
 .dropdown-option-list {
-    background: var(--theme-secondary);
     padding: var(--theme-padding);
-
+    border-bottom: var(--border);
 }
