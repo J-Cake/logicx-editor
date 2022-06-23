@@ -1,5 +1,7 @@
 import { Extension } from "../../../core/ext/Extension.js";
-import ChainComponent from "../chaincomponent.js";
+
+import type ChainComponent from "../../circuit/chaincomponent.js";
+
 import { ComponentUserAction } from "../viewport.js";
 
 export const name = "chain_tool_select";

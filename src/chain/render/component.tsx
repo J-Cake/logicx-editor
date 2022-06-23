@@ -2,8 +2,10 @@ import React from 'react';
 import { chain as _ } from 'lodash';
 
 import type { Colour } from '../../../core/ext/ThemeManager';
+
+import type ChainComponent from '../../circuit/chaincomponent';
+
 import { StateMgr } from '../ext';
-import ChainComponent from '../chaincomponent';
 
 export interface ComponentProps {
     inputs: { [key in string]: boolean },

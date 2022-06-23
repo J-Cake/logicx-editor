@@ -1,7 +1,9 @@
 import React from 'react';
 
 import { Colour } from '../../../core/ext/ThemeManager';
-import ChainComponent from "../chaincomponent";
+
+import type ChainComponent from "../../circuit/chaincomponent";
+
 import { StateMgr } from '../ext';
 
 export type Wire = {

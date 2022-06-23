@@ -1,19 +1,22 @@
+// Global Modules
 import React from 'react';
+import _ from 'lodash';
 
-import StateManager from '../../core/stateManager';
+// Core APIs
 import type { Extension } from '../../core/ext/Extension';
 import type { ActionItem } from '../../core/ext/ViewportManager';
-import type Document from "../document/document";
+import StateManager from '../../core/stateManager';
 
-import { ComponentUserAction, Viewport, Storage } from './viewport';
-import ChainComponent from './chaincomponent';
+// Isolated UI components
 import ToolButton from '../../ui/components/toolbtn';
 import Combobox from '../../ui/components/combobox';
 
-import Stateless from './stateless';
-import Stateful from './stateful';
-import Dynamic from './dynamic';
-import _ from 'lodash';
+// Separate plugins
+import type ChainComponent from '../circuit/chaincomponent';
+import type Document from "../document/document";
+
+// Local Imports
+import { ComponentUserAction, Viewport, Storage } from './viewport';
 
 export const name = 'chain';
 
@@ -98,9 +101,6 @@ export default function Ext(extension: Extension<Storage>) {
     }).emitEvent);
 
     extension.api().expose("document", () => StateMgr.get().document);
-    extension.api().expose("Stateless", Stateless);
-    extension.api().expose("Stateful", Stateful);
-    extension.api().expose("Dynamic", Dynamic);
 
     extension.api().expose('select', {
         toggle(...items: ChainComponent<any, any>[]) {

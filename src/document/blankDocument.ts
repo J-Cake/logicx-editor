@@ -1,7 +1,9 @@
-import ChainComponent from "../chain/chaincomponent";
-import type Stateless from "../chain/stateless";
-import type { TruthTable } from '../chain/stateless';
-import type Dynamic from "../chain/dynamic";
+import type ChainComponent from "../circuit/chaincomponent";
+import type Stateless from "../circuit/stateless";
+import type Stateful from "../circuit/stateful";
+import type Dynamic from "../circuit/dynamic";
+import type { TruthTable } from '../circuit/stateless';
+
 import Document from "./document";
 import { extension } from "./ext";
 
@@ -51,8 +53,8 @@ export default class BlankDocument extends Document {
 
     private static mkTmp(): ChainComponent<any, any>[] {
 
-        const StatelessComponent: typeof Stateless = extension.api().getNamespace('chain').getSymbol('Stateless')!;
-        const DynamicComponent: typeof Dynamic = extension.api().getNamespace('chain').getSymbol('Dynamic')!;
+        const StatelessComponent: typeof Stateless = extension.api().getNamespace('circuit').getSymbol('Stateless')!;
+        const DynamicComponent: typeof Dynamic = extension.api().getNamespace('circuit').getSymbol('Dynamic')!;
 
         const Input = class Input extends DynamicComponent<[], ['input']> {
             private value: boolean = false;

@@ -2,10 +2,12 @@ import React from 'react';
 import _ from 'lodash';
 
 import Collapsible from '../../ui/components/collapsible';
-import Stateless from '../chain/stateless';
-import type Stateful from '../chain/stateful';
-import type Dynamic from '../chain/dynamic';
+
+import type Stateless from '../circuit/stateless';
+import type Stateful from '../circuit/stateful';
+import type Dynamic from '../circuit/dynamic';
 import type Document from '../document/document';
+
 import Component from './Component';
 import { extension } from './ext';
 

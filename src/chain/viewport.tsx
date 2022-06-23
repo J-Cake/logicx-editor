@@ -1,12 +1,14 @@
 import React from 'react';
 
+import type { Extension } from '../../core/ext/Extension';
+
+import type ChainComponent from '../circuit/chaincomponent';
+import type Document from "../document/document";
+
 // @ts-ignore
 import glob from './glob.css';
-import ChainComponent from './chaincomponent';
-import Document from "../document/document";
 import RenderComponent from './render/component';
 import Wire from './render/wire';
-import type { Extension } from '../../core/ext/Extension';
 
 import { StateMgr } from './ext';
 
@@ -26,7 +28,7 @@ export class Viewport extends React.Component<{ extension: Extension<Storage>, p
     state = { pan: [0, 0] as [number, number], zoom: 1 };
 
     componentDidMount() {
-        ChainComponent.onUpdate = () => this.updateTimeout ?? (this.updateTimeout = window.setTimeout(() => (this.forceUpdate(), delete this.updateTimeout), 1000 / 60));
+        // ChainComponent.onUpdate = () => this.updateTimeout ?? (this.updateTimeout = window.setTimeout(() => (this.forceUpdate(), delete this.updateTimeout), 1000 / 60));
 
         StateMgr.on('transform', state => this.setState({ pan: state.pan, zoom: state.zoom }));
 

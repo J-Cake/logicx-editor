@@ -3,7 +3,7 @@
     "version": "2.0.1",
     "type":"module",
     "scripts": {
-        "build:all": "$npm_execpath exec mkjson -B build/ext/theme/default.js build/ext/document.js build/ext/overview.js build/ext/find-action.js build/ext/chain.js build/ext/chain_select.js build/ext/chain_activate.js build/editor.js",
+        "build:all": "$npm_execpath exec mkjson -B build/ext/circuit.js build/ext/theme/default.js build/ext/document.js build/ext/overview.js build/ext/find-action.js build/ext/chain.js build/ext/chain_select.js build/ext/chain_activate.js build/editor.js",
         "serve": "$npm_execpath exec nhp build -p 2560 --error 404 static/404.md --markdown static/md.jsml"
     },
     "dependencies": {
@@ -42,6 +42,10 @@
                 "esbuild core/index.ts --outdir=build  --bundle --sourcemap --splitting --platform=browser --format=esm --loader:.lpf=file",
                 "mv build/index.js build/editor.js"
             ]
+        },
+        "build/ext/circuit.js": {
+            "dependencies": ["src/circuit/*.ts", "build/editor.js"],
+            "run": "esbuild src/circuit/ext.ts --outfile=build/ext/circuit.js --bundle --sourcemap --platform=browser --format=esm --loader:.lpf=file"
         },
         "build/ext/theme/default.js": {
             "dependencies": ["src/themes/default.js", "build/editor.js"],

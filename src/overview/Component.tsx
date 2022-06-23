@@ -1,6 +1,6 @@
 import React from 'react';
 
-import type ChainComponent from '../chain/chaincomponent';
+import type ChainComponent from '../circuit/chaincomponent';
 
 export interface ComponentProps {
     component: ChainComponent<any, any>
