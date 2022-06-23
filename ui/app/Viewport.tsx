@@ -1,28 +1,31 @@
 import $ from 'jquery';
 import React from "react";
+import _ from 'lodash';
+
 import { StateMgr as StateMgr } from "../../core";
+
+import { TabContainer, TabView } from '../components/tab';
 
 export interface ViewportProps {
 
 }
 
 export default class Viewport extends React.Component<ViewportProps, { viewport: JSX.Element }> {
-    viewport: React.RefObject<HTMLDivElement> = React.createRef();
+    ref = React.createRef<HTMLDivElement>();
 
     componentDidMount(): void {
         setTimeout(() => this.forceUpdate(), 0);
         StateMgr.on('theme-change', () => this.forceUpdate());
+        StateMgr.get().viewport.on('viewport-change', () => this.forceUpdate());
     }
 
     render() {
-        const id = "viewport"; // moving to separate binding to shut it up about duplicate ID attributes
-        if (StateMgr.get().viewport.get().viewport && this.viewport.current)
-            return <div id={id} ref={this.viewport}>
-                {StateMgr.get().viewport.get().viewport($(this.viewport.current))}
-            </div>;
-        else
-            return <div id="viewport" ref={this.viewport}>
-                Editing <i>{StateMgr.get().document.name}</i>
-            </div>
+        return <div ref={this.ref} id="viewport">
+            <TabContainer>
+                {_.mapValues(StateMgr.get().viewport.get().viewport, (i, a) => <TabView title={a}>
+                    {i($(this.ref.current!))}
+                </TabView>)}
+            </TabContainer>
+        </div>
     }
 }

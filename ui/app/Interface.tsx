@@ -9,7 +9,6 @@ import Viewport from "./Viewport";
 import * as Tab from '../components/tab';
 import { StateMgr } from "../../core";
 import StatusItem from "./private/status";
-import Splitter from "./private/splitter";
 
 export default class Interface extends React.Component<{ documentId: string }, { leftPanel: boolean, rightPanel: boolean, leftSize: number, rightSize: number }> {
     constructor(props: { documentId: string }) {

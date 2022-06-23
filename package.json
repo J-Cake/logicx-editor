@@ -3,7 +3,7 @@
     "version": "2.0.1",
     "type":"module",
     "scripts": {
-        "build:all": "$npm_execpath exec mkjson -B build/ext/circuit.js build/ext/theme/default.js build/ext/document.js build/ext/overview.js build/ext/find-action.js build/ext/chain.js build/ext/chain_select.js build/ext/chain_activate.js build/editor.js",
+        "build:all": "$npm_execpath exec mkjson -B build/ext/circuit.js build/ext/theme/default.js build/ext/document.js build/ext/overview.js build/ext/find-action.js build/ext/chain-view.js build/ext/tree-view.js build/ext/chain_select.js build/ext/chain_activate.js build/editor.js",
         "serve": "$npm_execpath exec nhp build -p 2560 --error 404 static/404.md --markdown static/md.jsml"
     },
     "dependencies": {
@@ -32,7 +32,7 @@
         },
         "all": {
             "phony": true,
-            "dependencies": ["build/ext/theme/default.js", "build/ext/document.js", "build/ext/find-action.js", "build/ext/chain.js", "build/ext/chain_select.js", "build/ext/chain_activate.js", "build/editor.js"],
+            "dependencies": ["build/ext/circuit.js", "build/ext/theme/default.js", "build/ext/document.js", "build/ext/find-action.js", "build/ext/chain.js", "build/ext/chain_select.js", "build/ext/chain_activate.js", "build/editor.js"],
             "run": "ln -sfr static/* build/"
         },
         "build/editor.js": {
@@ -63,22 +63,26 @@
             "dependencies": ["src/ui/find-action.jsx", "build/editor.js"],
             "run": "esbuild src/ui/find-action.jsx --outfile=build/ext/find-action.js --bundle --sourcemap --platform=browser --format=esm --loader:.lpf=file"
         },
-        "build/ext/chain.js": {
-            "dependencies": ["src/chain/ext.tsx", "build/editor.js"],
-            "run": "esbuild src/chain/ext.tsx --outfile=build/ext/chain.js --bundle --sourcemap --platform=browser --format=esm --loader:.lpf=file --loader:.css=text"
+        "build/ext/chain-view.js": {
+            "dependencies": ["src/chain-view/*.ts", "build/editor.js"],
+            "run": "esbuild src/chain-view/ext.tsx --outfile=build/ext/chain-view.js --bundle --sourcemap --platform=browser --format=esm --loader:.lpf=file --loader:.css=text"
+        },
+        "build/ext/tree-view.js": {
+            "dependencies": ["src/tree-view/*.tsx", "build/editor.js"],
+            "run": "esbuild src/tree-view/ext.tsx --outfile=build/ext/tree-view.js --bundle --sourcemap --platform=browser --format=esm --loader:.lpf=file --loader:.css=text"
         },
         "build/ext/chain_select.js": {
-            "dependencies": ["src/chain/tools/select.ts", "build/ext/chain.js"],
+            "dependencies": ["src/chain-view/tools/select.ts", "build/ext/chain.js"],
             "run": [
                 "mkdir -p build/ext",
-                "esbuild src/chain/tools/select.ts --outfile=build/ext/chain_select.js --bundle --sourcemap --platform=browser --format=esm --loader:.lpf=file --loader:.css=text"
+                "esbuild src/chain-view/tools/select.ts --outfile=build/ext/chain_select.js --bundle --sourcemap --platform=browser --format=esm --loader:.lpf=file --loader:.css=text"
             ]
         },
         "build/ext/chain_activate.js": {
-            "dependencies": ["src/chain/tools/activate.ts", "build/ext/chain.js"],
+            "dependencies": ["src/chain-view/tools/activate.ts", "build/ext/chain.js"],
             "run": [
                 "mkdir -p build/ext",
-                "esbuild src/chain/tools/activate.ts --outfile=build/ext/chain_activate.js --bundle --sourcemap --platform=browser --format=esm --loader:.lpf=file --loader:.css=text"
+                "esbuild src/chain-view/tools/activate.ts --outfile=build/ext/chain_activate.js --bundle --sourcemap --platform=browser --format=esm --loader:.lpf=file --loader:.css=text"
             ]
         }
     }

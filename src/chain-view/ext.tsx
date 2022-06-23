@@ -18,7 +18,7 @@ import type Document from "../document/document";
 // Local Imports
 import { ComponentUserAction, Viewport, Storage } from './viewport';
 
-export const name = 'chain';
+export const name = 'chain-view';
 
 export const StateMgr = new StateManager<{
     zoom: number,
@@ -34,8 +34,6 @@ export const StateMgr = new StateManager<{
     extStorage: StateManager<Storage>,
 
     getValue: <T>(path: string) => T | null,
-
-    document?: Document
 }>({ zoom: 1, pan: [0, 0], gridSize: 35, grid: false, getValue: () => null, selected: new Set() });
 
 export default function Ext(extension: Extension<Storage>) {
@@ -51,7 +49,7 @@ export default function Ext(extension: Extension<Storage>) {
     })));
     // To set the tool bars
     extension.storage().setState({
-        tools: ['chain.view.reset', 'chain.view.zoom-in', 'chain.view.zoom-out'],
+        tools: ['chain-view.view.reset', 'chain-view.view.zoom-in', 'chain-view.view.zoom-out'],
         registeredTools: {},
         selectedTool: 'activate'
     });
@@ -100,8 +98,6 @@ export default function Ext(extension: Extension<Storage>) {
         }
     }).emitEvent);
 
-    extension.api().expose("document", () => StateMgr.get().document);
-
     extension.api().expose('select', {
         toggle(...items: ChainComponent<any, any>[]) {
             const selected = StateMgr.get().selected;
@@ -129,9 +125,7 @@ export default function Ext(extension: Extension<Storage>) {
             StateMgr.get().selected.clear();
 
         }
-    })
-
-    // TODO: Figure out how to migrate to function component
+    });
 
     extension.ui.viewport(function (parent) {
         return <section id="document-editor">
@@ -145,5 +139,5 @@ export default function Ext(extension: Extension<Storage>) {
 
             <Viewport ref={viewport} extension={extension as any} pan={pan} zoom={zoom} width={parent.width()!} height={parent.height()!} />
         </section>;
-    });
+    }, 'Chain View');
 }

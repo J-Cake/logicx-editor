@@ -1,6 +1,16 @@
 {
     "theme": "default",
-    "extensions": ["/ext/circuit.js", "/ext/theme/default.js", "/ext/document.js", "/ext/overview.js", "/ext/find-action.js", "/ext/chain.js", "/ext/chain_select.js", "/ext/chain_activate.js"],
+    "extensions": [
+        "/ext/circuit.js", 
+        "/ext/theme/default.js", 
+        "/ext/document.js", 
+        "/ext/overview.js", 
+        "/ext/find-action.js", 
+        "/ext/chain-view.js", 
+        "/ext/tree-view.js", 
+        "/ext/chain_select.js", 
+        "/ext/chain_activate.js"
+    ],
     "language": "en_au",
     "toolbarLeft": ["document.save"],
     "toolbarTop": [],

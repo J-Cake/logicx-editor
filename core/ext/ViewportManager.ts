@@ -36,7 +36,8 @@ interface ViewportManagerState {
     right: PanelItem[],
     left_focus: number,
     right_focus: number,
-    viewport: (parent: JQuery) => JSX.Element,
+    viewport: Record<string, (parent: JQuery) => JSX.Element>,
+    // viewport: (parent: JQuery) => JSX.Element,
 
     LeftToolbar: ActionItem[],
     RightToolbar: ActionItem[],
@@ -52,6 +53,8 @@ export default class ViewportManager extends StateManager<ViewportManagerState> 
             right: [],
             left_focus: 0,
             right_focus: 0,
+
+            viewport: {},
 
             TopToolbar: [],
             LeftToolbar: [],

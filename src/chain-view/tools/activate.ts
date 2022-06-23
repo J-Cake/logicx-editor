@@ -11,7 +11,7 @@ type RegisterHandler = (name: string) => Record<ComponentUserAction, (handler: (
 export default async function (extension: Extension<{}>) {
     console.log("Activate extension");
 
-    const chain = extension.api().getNamespace('chain');
+    const chain = extension.api().getNamespace('chain-view');
     const on = chain.getSymbol<RegisterHandler>('register-tool')?.('activate');
 
     on?.click(function(target) {

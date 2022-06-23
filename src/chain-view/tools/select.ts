@@ -2,7 +2,7 @@ import { Extension } from "../../../core/ext/Extension.js";
 
 import type ChainComponent from "../../circuit/chaincomponent.js";
 
-import { ComponentUserAction } from "../viewport.js";
+import { ComponentUserAction } from "../viewport.jsx";
 
 export const name = "chain_tool_select";
 
@@ -10,7 +10,7 @@ type RegisterHandler = (name: string) => Record<ComponentUserAction, (handler: (
 
 // Async function to run once free - to ensure that chain is loaded
 export default async function Ext(extension: Extension<{}>) {
-    const chain = extension.api().getNamespace('chain');
+    const chain = extension.api().getNamespace('chain-view');
     const on = chain.getSymbol<RegisterHandler>('register-tool')?.('select');
     const emit = chain.getSymbol<(event: ComponentUserAction, target: ChainComponent<any, any>) => void>('emit-event');
     const select = chain.getSymbol<{
@@ -29,7 +29,7 @@ export default async function Ext(extension: Extension<{}>) {
     extension.action.register('select-all', () => console.warn('Not implemented yet'), "Select All")
     extension.action.register('select-none', () => select?.clear(), "Select None")
 
-    // const events = extension.api().getNamespace("chain").getSymbol<Record<ComponentUserAction, ((handler: (component: RenderComponent) => void) => void)>>("on");
+    // const events = extension.api().getNamespace("chain-view").getSymbol<Record<ComponentUserAction, ((handler: (component: RenderComponent) => void) => void)>>("on");
 
     // if (events && events.click)
     //     events.click(function (component) {

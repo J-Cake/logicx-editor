@@ -46,7 +46,7 @@ export interface Extension<T extends {} = any> {
     },
 
     ui: {
-        viewport(viewport: (parent: JQuery) => JSX.Element): void,
+        viewport(viewport: (parent: JQuery) => JSX.Element, heading: string): void,
         panel: ViewportManager['addPanelItem'],
         theme: ThemeManager['pushTheme']
     },
@@ -99,9 +99,9 @@ export default function Extension<T extends {} = any>(name: string, onLoad: (ext
         },
 
         ui: {
-            viewport(viewport: (parent: JQuery) => JSX.Element) {
+            viewport(viewport: (parent: JQuery) => JSX.Element, heading: string) {
                 if (typeof viewport === 'function')
-                    state.viewport.setState({viewport: viewport});
+                    state.viewport.dispatch('viewport-change', prev => ({ viewport: { ...prev.viewport, [heading]: viewport } }));
                 else throw `Expected viewport to be a function`;
             },
             panel: state.viewport.addPanelItem.bind(state.viewport),

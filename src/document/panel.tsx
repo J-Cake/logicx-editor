@@ -4,11 +4,9 @@ import { Extension } from "../../core/ext/Extension";
 import { ApiDocument } from "../../core/api/resources";
 import ToolButton from '../../ui/components/toolbtn';
 
-import { Ctx } from './ext';
-
-export default class Panel extends React.Component<{ ctx: Extension<Ctx> }, { documents?: ApiDocument[] }> {
+export default class Panel extends React.Component<{ ctx: Extension<{}> }, { documents?: ApiDocument[] }> {
     static ctx: Extension<{}>;
-    constructor(props: { ctx: Extension<Ctx> }) {
+    constructor(props: { ctx: Extension<{}> }) {
         super(props);
         this.state = {};
     }

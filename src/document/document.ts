@@ -1,6 +1,6 @@
 import type {ApiDocument, GenericComponent} from "../../core/api/resources";
 import type ChainComponent from "../circuit/chaincomponent";
-import type {Wire} from "../chain/render/wire";
+import type {Wire} from "../chain-view/render/wire";
 
 export default class Document {
 
