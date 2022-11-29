@@ -1,3 +1,6 @@
+@import './master.css';
+@import './layout.css';
+
 /*
 This file is responsible only for theme-adjustable properties
 Any styles defined here are controlled by theme values.

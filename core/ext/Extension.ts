@@ -1,7 +1,7 @@
 import {StateMgr as StateMgr} from "..";
 import StateManager from "../stateManager";
 import {ActionNamespace} from "./ActionManager";
-import ThemeManager, {Colour, colour} from "./ThemeManager";
+import ThemeManager, {Colour} from "./ThemeManager";
 import ViewportManager from "./ViewportManager";
 import {query} from "../api/interfaces";
 
@@ -48,11 +48,12 @@ export interface Extension<T extends {} = any> {
     ui: {
         viewport(viewport: (parent: JQuery) => JSX.Element, heading: string): void,
         panel: ViewportManager['addPanelItem'],
-        theme: ThemeManager['pushTheme']
+        theme: ThemeManager['pushTheme'],
     },
 
     util: {
-        colour(colour: string | [string, string]): Colour | [Colour, Colour]
+        parseColour(colour: string | [string, string]): Colour | [Colour, Colour],
+        switchColour(colour: string | [string, string] | Colour | [Colour, Colour]): Colour
     },
 
     resource: typeof query,
@@ -71,23 +72,6 @@ export default function Extension<T extends {} = any>(name: string, onLoad: (ext
     const sharedState = new StateManager<T>({}); // TODO: Find a way to store these such that each can be retrieved. Extension IDs for example
     const storage = () => sharedState;
 
-    function parse(colourValue: string): Colour;
-    function parse(colourValue: [string, string]): [Colour, Colour];
-    function parse(colourValue: string | [string, string]): Colour | [Colour, Colour] {
-        const parseColour = function (colourValue: string): Colour {
-            if (colourValue.startsWith('#') && (colourValue.length === 7 || colourValue.length === 9))
-                return colour(...colourValue.slice(1).split(/(..)/).filter(i => i).map(i => parseInt(i, 16)) as [number, number, number, number?]);
-            else
-                throw `Invalid Colour Format: Expected rgb (#rrggbb) or rgba (#rrggbbaa)`;
-        };
-
-        if (typeof colourValue === 'string') {
-            return parseColour(colourValue);
-        } else {
-            return [parseColour(colourValue[0]), parseColour(colourValue[1])];
-        }
-    }
-
     return {
         action: {
             invoke: name => state.actions.invokeAction(name),
@@ -101,11 +85,11 @@ export default function Extension<T extends {} = any>(name: string, onLoad: (ext
         ui: {
             viewport(viewport: (parent: JQuery) => JSX.Element, heading: string) {
                 if (typeof viewport === 'function')
-                    state.viewport.dispatch('viewport-change', prev => ({ viewport: { ...prev.viewport, [heading]: viewport } }));
+                    state.viewport.dispatch('viewport-change', prev => ({viewport: {...prev.viewport, [heading]: viewport}}));
                 else throw `Expected viewport to be a function`;
             },
             panel: state.viewport.addPanelItem.bind(state.viewport),
-            theme: state.themes.pushTheme.bind(state.themes)
+            theme: state.themes.pushTheme.bind(state.themes),
         },
 
         storage: () => storage()!,
@@ -113,7 +97,8 @@ export default function Extension<T extends {} = any>(name: string, onLoad: (ext
         api: () => api,
 
         util: {
-            colour: parse
+            parseColour: state.themes.parseColour.bind(state.themes),
+            switchColour: state.themes.switchColour.bind(state.themes)
         },
 
         resource: query,

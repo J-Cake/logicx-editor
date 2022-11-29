@@ -7,8 +7,6 @@ body {
     --toolbar-size: 48px;
     --panel-left-size: 256px;
     --panel-right-size: 256px;
-
-    --inactive: brightness(0.8) contrast(0.6);
 }
 
 body {
@@ -108,7 +106,7 @@ body {
 }
 
 .logicx-widget.tab-container .tab-header .tab:not(.active) {
-    filter: var(--inactive);
+    border-color: var(--theme-foreground);
     box-shadow: none;
 }
 

@@ -11,6 +11,7 @@ import RenderComponent from './render/component';
 import Wire from './render/wire';
 
 import { StateMgr } from './ext';
+import NoContents from "../../ui/components/no-contents";
 
 export type ComponentUserAction = 'click' | 'dblclick' | 'activate' | 'select' | 'breakpoint' | 'connect' | 'disconnect' | 'delete';
 export interface Storage {
@@ -81,6 +82,6 @@ export class Viewport extends React.Component<ViewportProps, ViewportState> {
                 </g>
             </svg>;
         } else
-            return <span>No Document loaded</span>;
+            return <NoContents/>;
     }
 }

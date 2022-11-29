@@ -1,9 +1,9 @@
 export type wires = {
-    [dest: number]: [{
+    [dest: number]: {
         coords: [number, number][],
         inputIndex: number,
         outputIndex: number
-    }]
+    }[]
 };
 
 export interface GenericComponent {

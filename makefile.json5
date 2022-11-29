@@ -1,13 +1,17 @@
 {
+    env: {
+        esbuild_args: "echo --bundle --sourcemap --platform=browser --format=esm --loader:.lpf=file --loader:.svg=text"
+    },
     targets: {
         clean: {
             phony: true,
             run: "cat .gitignore | xargs rm -rf"
         },
-        all: {
-            phony: true,
-            dependencies: ['build/*'],
-            run: "ln -sfr static/* build/"
+        'build/index.html': {
+            dependencies: [
+                'static/index.html'
+            ],
+            run: "ln -sfr static/index.html build"
         },
         'build/editor.js': {
             dependencies: [
@@ -16,7 +20,7 @@
             ],
             run: [
                 "mkdir -p build",
-                "pnpm exec esbuild core/index.ts --outdir=build  --bundle --sourcemap --splitting --platform=browser --format=esm --loader:.lpf=file",
+                "pnpm exec esbuild core/index.ts --outdir=build  --splitting $esbuild_args",
                 "mv build/index.js build/editor.js"
             ]
         },
@@ -25,7 +29,7 @@
                 "src/circuit/*.ts",
                 "build/editor.js"
             ],
-            run: "pnpm exec esbuild src/circuit/ext.ts --outfile=build/ext/circuit.js --bundle --sourcemap --platform=browser --format=esm --loader:.lpf=file"
+            run: "pnpm exec esbuild src/circuit/ext.ts --outfile=build/ext/circuit.js  $esbuild_args"
         },
         'build/ext/theme/default.js': {
             dependencies: [
@@ -39,35 +43,35 @@
                 "src/document/*.ts+",
                 "build/editor.js"
             ],
-            run: "pnpm exec esbuild src/document/ext.tsx --outfile=build/ext/document.js --bundle --sourcemap --platform=browser --format=esm --loader:.lpf=file"
+            run: "pnpm exec esbuild src/document/ext.tsx --outfile=build/ext/document.js  $esbuild_args"
         },
         'build/ext/overview.js': {
             dependencies: [
                 "src/overview/*.ts+",
                 "build/editor.js"
             ],
-            run: "pnpm exec esbuild src/overview/ext.tsx --outfile=build/ext/overview.js --bundle --sourcemap --platform=browser --format=esm --loader:.lpf=file"
+            run: "pnpm exec esbuild src/overview/ext.tsx --outfile=build/ext/overview.js  $esbuild_args"
         },
         'build/ext/find-action.js': {
             dependencies: [
                 "src/ui/find-action.jsx",
                 "build/editor.js"
             ],
-            run: "pnpm exec esbuild src/ui/find-action.jsx --outfile=build/ext/find-action.js --bundle --sourcemap --platform=browser --format=esm --loader:.lpf=file"
+            run: "pnpm exec esbuild src/ui/find-action.jsx --outfile=build/ext/find-action.js  $esbuild_args"
         },
         'build/ext/chain-view.js': {
             dependencies: [
                 "src/chain-view/*.ts",
                 "build/editor.js"
             ],
-            run: "pnpm exec esbuild src/chain-view/ext.tsx --outfile=build/ext/chain-view.js --bundle --sourcemap --platform=browser --format=esm --loader:.lpf=file --loader:.css=text"
+            run: "pnpm exec esbuild src/chain-view/ext.tsx --outfile=build/ext/chain-view.js  $esbuild_args --loader:.css=text"
         },
         'build/ext/tree-view.js': {
             dependencies: [
                 "src/tree-view/*.tsx",
                 "build/editor.js"
             ],
-            run: "pnpm exec esbuild src/tree-view/ext.tsx --outfile=build/ext/tree-view.js --bundle --sourcemap --platform=browser --format=esm --loader:.lpf=file --loader:.css=text"
+            run: "pnpm exec esbuild src/tree-view/ext.tsx --outfile=build/ext/tree-view.js  $esbuild_args --loader:.css=text"
         },
         'build/ext/chain_select.js': {
             dependencies: [
@@ -76,7 +80,7 @@
             ],
             run: [
                 "mkdir -p build/ext",
-                "pnpm exec esbuild src/chain-view/tools/select.ts --outfile=build/ext/chain_select.js --bundle --sourcemap --platform=browser --format=esm --loader:.lpf=file --loader:.css=text"
+                "pnpm exec esbuild src/chain-view/tools/select.ts --outfile=build/ext/chain_select.js  $esbuild_args --loader:.css=text"
             ]
         },
         'build/ext/chain_activate.js': {
@@ -86,8 +90,14 @@
             ],
             run: [
                 "mkdir -p build/ext",
-                "pnpm exec esbuild src/chain-view/tools/activate.ts --outfile=build/ext/chain_activate.js --bundle --sourcemap --platform=browser --format=esm --loader:.lpf=file --loader:.css=text"
+                "pnpm exec esbuild src/chain-view/tools/activate.ts --outfile=build/ext/chain_activate.js  $esbuild_args --loader:.css=text"
             ]
+        },
+        'build/main.css': {
+            dependencies: [
+                'static/*.css'
+            ],
+            run: "pnpm exec esbuild static/index.css --outfile=build/main.css  $esbuild_args"
         }
     }
 }

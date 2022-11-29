@@ -1,8 +1,8 @@
-import ThemeMananger, { Theme } from "./ThemeManager";
+import ThemeManager, { Theme } from "./ThemeManager";
 
 export interface GlobalPreferences {
     extensions: string[],
-    theme: keyof ThemeMananger['themes'][string],
+    theme: keyof ThemeManager['themes'][string],
     language: string,
     toolbarLeft: string[],
     toolbarRight: string[],
