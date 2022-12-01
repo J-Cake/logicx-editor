@@ -12,9 +12,9 @@ export interface StatusBarProps {
 export default class StatusBar extends React.Component<StatusBarProps> {
     render() {
         return <div id="statusbar">
-            {this.props.children.left}
+            {this.props.children.left.map((i, a) => <div key={a} className="statusbar-item">{i}</div>)}
             <span className='spacer' />
-            {this.props.children.right}
+            {this.props.children.left.map((i, a) => <div key={a} className="statusbar-item">{i}</div>)}
         </div>;
     }
 }

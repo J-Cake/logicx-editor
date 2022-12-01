@@ -18,10 +18,34 @@ export interface GenericComponent {
     wires: wires
 }
 
+export interface ApiComponentDefinition {
+    type: string,
+    name: string,
+    token: string,
+    inputs: string[],
+    outputs: string[],
+}
+
+export interface ApiStatelessComponentDefinition extends ApiComponentDefinition {
+    type: 'Stateless',
+    truthTable: [input: { [input: string]: boolean }, output: { [output: string]: boolean }][]
+}
+
+export interface ApiStatefulComponentDefinition extends ApiComponentDefinition {
+    type: 'Stateful',
+    children: ApiDocument['components'],
+}
+
+export interface ApiDynamicComponentDefinition extends ApiComponentDefinition {
+    type: 'Dynamic',
+
+    origin: string,
+}
+
 // This type indicates a JSON-compatible type which the API responds with.
 export interface ApiDocument {
     circuitName: string,
-    content: { [id: number]: GenericComponent },
-    components: string[], // List of component tokens
+    content: GenericComponent[],
+    components: { [token in string]: string | ApiComponentDefinition },
     ownerEmail: string,
 }

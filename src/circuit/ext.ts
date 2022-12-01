@@ -13,7 +13,6 @@ export interface Storage {
 }
 
 export default function main(ext: Extension<Storage>) {
-
     ext.api().expose('get-current-document', () => ext.storage().get().document);
     ext.api().expose('on-document-change', function (handler: (document: Document) => void) {
         const onChange = ext.api().getNamespace('document').getSymbol('on-request-document-change');
