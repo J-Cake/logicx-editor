@@ -12,15 +12,15 @@ Any styles defined here are controlled by theme values.
     background: var(--theme-primary);
 }
 
-#statusbar .status-item .icon,
-#statusbar .status-item .icon {
+#statusbar .logicx-status-item .icon,
+#statusbar .logicx-status-item .icon {
     text-align: center;
     min-width: var(--toolbar-size);
     max-width: var(--toolbar-size);
 }
 
-#statusbar .status-item,
-#statusbar .status-item {
+#statusbar .logicx-status-item,
+#statusbar .logicx-status-item {
     height: var(--statusbar-size);
     background: var(--theme-primary);
 }

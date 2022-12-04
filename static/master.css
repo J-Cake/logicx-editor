@@ -149,8 +149,8 @@ body {
 
 /* ## Buttons */
 
-.toolbar.left .logicx-control.toolbar-button,
-.toolbar.right .logicx-control.toolbar-button {
+.logicx-toolbar.left .logicx-control.toolbar-button,
+.logicx-toolbar.right .logicx-control.toolbar-button {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -160,17 +160,17 @@ body {
     max-width: calc(var(--toolbar-size) * 2.5);
 }
 
-.toolbar.left .logicx-control.toolbar-button {
+.logicx-toolbar.left .logicx-control.toolbar-button {
     rotate: -90deg;
 }
 
-.toolbar.right .logicx-control.toolbar-button {
+.logicx-toolbar.right .logicx-control.toolbar-button {
     rotate: 90deg;
 }
 
 .logicx-control.toolbar-button:hover,
-#statusbar .status-item:hover,
-#statusbar .status-item:focus,
+#statusbar .logicx-status-item:hover,
+#statusbar .logicx-status-item:focus,
 button:hover,
 input:hover,
 button:focus,

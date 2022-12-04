@@ -13,7 +13,7 @@ export default class StatusBar extends React.Component<StatusBarProps> {
     render() {
         return <div id="statusbar">
             {this.props.children.left.map((i, a) => <div key={a} className="statusbar-item">{i}</div>)}
-            <span className='spacer' />
+            <span className='logicx-spacer' />
             {this.props.children.left.map((i, a) => <div key={a} className="statusbar-item">{i}</div>)}
         </div>;
     }

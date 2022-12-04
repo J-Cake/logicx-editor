@@ -17,6 +17,9 @@ import type Document from "../document/document";
 
 // Local Imports
 import { ComponentUserAction, Viewport, Storage } from './viewport';
+import {TabView} from "../../ui/components/tab";
+import ViewportContainer from "../../ui/components/viewport-container";
+import ToolBar from "../../ui/app/ToolBar";
 
 export const name = 'chain-view';
 
@@ -128,8 +131,14 @@ export default function Ext(extension: Extension<Storage>) {
     });
 
     extension.ui.viewport(function (parent) {
+        return <ViewportContainer>
+            <ToolBar position='top'>
+
+            </ToolBar>
+        </ViewportContainer>;
+
         return <section id="document-editor">
-            <div className={`toolbar top`}>
+            <div className={`logicx-toolbar top`}>
 
                 <Combobox onChange={tool => extension.storage().dispatch('change-tool', { selectedTool: tool })}>{Object.keys(extension.storage().get().registeredTools)}</Combobox>
 

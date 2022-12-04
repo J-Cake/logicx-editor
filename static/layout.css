@@ -60,12 +60,12 @@
     height: var(--statusbar-size);
 }
 
-.toolbar.top {
+.logicx-toolbar.top {
     grid-area: toolbar-top;
     overflow: hidden;
 }
 
-.toolbar.left {
+.logicx-toolbar.left {
     grid-area: toolbar-left;
     overflow: hidden;
     /* flex-direction: column; */
@@ -74,7 +74,7 @@
     overflow-y: auto;
 }
 
-.toolbar.right {
+.logicx-toolbar.right {
     grid-area: toolbar-right;
     overflow: hidden;
     /* flex-direction: column; */
@@ -83,7 +83,7 @@
     overflow-y: auto;
 }
 
-.toolbar {
+.logicx-toolbar {
     display: flex;
     justify-content: flex-start;
     align-items: center;
@@ -94,13 +94,13 @@
     /* margin: 4px; */
 }
 
-#statusbar .spacer {
+#statusbar .logicx-spacer {
     flex: 1;
     display: block;
     width: auto;
 }
 
-#statusbar .status-item {
+#statusbar .logicx-status-item {
     display: flex;
     align-items: center;
     justify-content: flex-start;
