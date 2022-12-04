@@ -2,6 +2,8 @@ import _ from 'lodash';
 
 import ChainComponent from "./chaincomponent";
 import {ApiStatefulComponentDefinition} from "../../core/api/resources";
+import Dynamic from "./dynamic";
+import {ComponentBuilder} from "../document/document";
 
 export default abstract class Stateful<Inputs extends string[], Outputs extends string[]> extends ChainComponent<Inputs, Outputs> {
 
@@ -9,9 +11,9 @@ export default abstract class Stateful<Inputs extends string[], Outputs extends 
     protected prevOutput: ChainComponent<Inputs, Outputs>['outbound'];
 
     // TODO: Internal Representation
-    
-    protected constructor(token: string, name: string, inputs: Inputs[number][], outputs: Outputs[number][]) {
-        super(token, name, inputs, outputs);
+
+    protected constructor(inputs: Inputs, outputs: Outputs) {
+        super(inputs, outputs);
 
         this.prevOutput = _.chain(outputs)
             .map(i => [i, false] as [keyof typeof this.prevOutput, boolean])
@@ -23,29 +25,17 @@ export default abstract class Stateful<Inputs extends string[], Outputs extends 
         })
     }
 
-    static async load(data: ApiStatefulComponentDefinition): Promise<Stateful<any, any>> {
-        return new class extends Stateful<any, any> {
-            constructor(token: string, name: string, inputs: string[], outputs: string[]) {
-                super(token, name, inputs, outputs);
+    static async load<Inputs extends string[], Outputs extends string[]>(data: ApiStatefulComponentDefinition<Inputs, Outputs>): Promise<ComponentBuilder<Inputs, Outputs>> {
+        // @ts-expect-error ???
+        return class extends Stateful<any, any> {
+            public static readonly component = data;
+            static new(): Stateful<Inputs, Outputs> {
+                return new this(data.inputs, data.outputs);
             }
-        }(data.token, data.name, data.inputs, data.outputs)
+        };
     }
 
     protected propagate(input: ChainComponent<Inputs, Outputs>['inbound']): ChainComponent<Inputs, Outputs>['outbound'] {
         return this.prevOutput;
-    }
-
-    export(): ApiStatefulComponentDefinition {
-        return {
-            type: "Stateful",
-
-            token: this.token,
-            name: this.name,
-
-            inputs: this.inputLabels,
-            outputs: this.outputLabels,
-
-            children: {} // TODO: Internal Representation
-        }
     }
 }

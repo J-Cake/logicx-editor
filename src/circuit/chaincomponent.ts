@@ -1,7 +1,11 @@
 import _ from 'lodash';
 import {ApiComponentDefinition} from "../../core/api/resources";
+import {ComponentBuilder} from "../document/document";
 
 export default abstract class ChainComponent<Inputs extends string[], Outputs extends string[]> {
+    public static get component(): ApiComponentDefinition<any, any> {
+        throw `Not Implemented`;
+    }
 
     public static onUpdate?: () => void;
     public readonly inputMap: { [id in Inputs[number]]: [ChainComponent<any[], any[]>, string] };
@@ -10,19 +14,23 @@ export default abstract class ChainComponent<Inputs extends string[], Outputs ex
     public readonly outbound: { [id in Outputs[number]]: boolean };
     public shouldBreak?: (component: ChainComponent<any[], any[]>) => boolean;
 
-    protected constructor(protected token: string, protected name: string, protected inputLabels: Inputs[number][], protected outputLabels: Outputs[number][]) {
-        this.inputMap = <any>_.fromPairs(_.map(inputLabels, i => [i, null]))// as ChainComponent<any[], any[]>['inputMap'];
-        this.outputMap = <any>_.fromPairs(_.map(outputLabels, i => [i, []]))// as ChainComponent<any[], any[]>['outputMap'];
-        this.inbound = <any>_.fromPairs(_.map(inputLabels, i => [i, false]))// as ChainComponent<any[], any[]>['inbound'];
-        this.outbound = <any>_.fromPairs(_.map(outputLabels, i => [i, false]))// as ChainComponent<any[], any[]>['outbound'];
+    protected constructor(public inputLabels: Inputs, public outputLabels: Outputs) {
+        this.inputMap = _.fromPairs(_.map(inputLabels, i => [i, null])) as any;
+        this.outputMap = _.fromPairs(_.map(outputLabels, i => [i, []])) as any;
+        this.inbound = _.fromPairs(_.map(inputLabels, i => [i, false])) as any;
+        this.outbound = _.fromPairs(_.map(outputLabels, i => [i, false])) as any;
     }
 
     public static update(component: ChainComponent<any[], any[]>) {
-        for (const val of component.update()) ;
+        void [...component.update()];
     }
 
-    static async load(data: ApiComponentDefinition): Promise<ChainComponent<any, any>> {
-        throw 'Not implemented'
+    static async load<Inputs extends string[], Outputs extends string[]>(data: ApiComponentDefinition<Inputs, Outputs>): Promise<ComponentBuilder<Inputs, Outputs>> {
+        throw `Not Implemented`
+    }
+
+    static new<Inputs extends string[], Outputs extends string[]>(): ChainComponent<Inputs, Outputs> {
+        throw `Not Implemented`;
     }
 
     addInput<_Inputs extends string[], Outputs extends string[]>(component: ChainComponent<_Inputs, Outputs>, from: Outputs[number], to: Inputs[number]): this {
@@ -36,16 +44,12 @@ export default abstract class ChainComponent<Inputs extends string[], Outputs ex
         return this;
     }
 
-    abstract export(): ApiComponentDefinition;
-
-    protected abstract propagate(input: ChainComponent<Inputs, Outputs>['inbound']): ChainComponent<Inputs, Outputs>['outbound'];
-
-    protected* update(): Generator<ChainComponent<any[], any[]>> {
+    * update(): Generator<ChainComponent<any[], any[]>> {
         if (ChainComponent.onUpdate)
             ChainComponent.onUpdate();
 
         for (const i in this.inputMap)
-            this.inbound[i as Inputs[number]] = this.inputMap[i as Inputs[number]][0].outbound[this.inputMap[i as Inputs[number]][1]] ?? false;
+            this.inbound[i as Inputs[number]] = this.inputMap[i as Inputs[number]]?.[0].outbound[this.inputMap[i as Inputs[number]][1]] ?? false;
 
         Object.assign(this.outbound, this.propagate(this.inbound));
 
@@ -58,6 +62,12 @@ export default abstract class ChainComponent<Inputs extends string[], Outputs ex
                     yield val;
     }
 
+    protected abstract propagate(input: ChainComponent<Inputs, Outputs>['inbound']): ChainComponent<Inputs, Outputs>['outbound'];
+
     protected onActivate(): void {
     };
+    //
+    // static from<Inputs extends string[], Outputs extends string[]>(token: string, name: string, inputs: Inputs, outputs: Outputs): ComponentBuilder<Inputs, Outputs> {
+    //     throw `Not Implemented`;
+    // }
 }

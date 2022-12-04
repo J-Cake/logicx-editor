@@ -69,12 +69,11 @@ export class Viewport extends React.Component<ViewportProps, ViewportState> {
 
                 viewBox={`${x} ${y} ${this.ref.current?.clientWidth ?? this.props.width} ${this.ref.current?.clientHeight ?? this.props.height}`}>
                 <style>{glob}</style>
-
                 <g>
-                    {doc.components.map((i, a) => <RenderComponent
+                    {doc.circuit.map((i, a) => <RenderComponent
                         inputs={i.inbound}
                         outputs={i.outbound}
-                        pos={doc!.apiComponent[a].position}
+                        pos={doc!.renderMap[a].position}
                         selected={selected.has(i)}
                         chain={i}
                         key={`input-${a}`} />)}

@@ -11,7 +11,8 @@
         "react-dom": "latest",
         "mousetrap": "latest",
         "lodash": "latest",
-        "jquery": "latest"
+        "jquery": "latest",
+        "json5": "latest"
     },
     "devDependencies": {
         "@types/react": "latest",

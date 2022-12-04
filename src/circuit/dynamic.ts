@@ -2,16 +2,18 @@ import _ from 'lodash';
 
 import ChainComponent from "./chaincomponent";
 import {ApiDynamicComponentDefinition} from "../../core/api/resources";
+import {ComponentBuilder} from "../document/document";
 
 type PropagateFn<Inputs extends string[], Outputs extends string[]> = (input: ChainComponent<Inputs, Outputs>["inbound"]) => ChainComponent<Inputs, Outputs>["outbound"];
-
+type ReturnType<Input extends string[], Output extends string[]> = Promise<Partial<{ propagate: PropagateFn<Input, Output>, onActivate: ChainComponent<Input, Output>['onActivate'] }>>;
+type FunctionMap<Inputs extends string[], Outputs extends string[]> = Partial<{ origin: string, propagate: PropagateFn<Inputs, Outputs>, onActivate: () => void }>;
 export default abstract class Dynamic<Inputs extends string[], Outputs extends string[]> extends ChainComponent<Inputs, Outputs> {
 
     protected origin: string;
     protected propagate: PropagateFn<Inputs, Outputs>;
 
-    protected constructor(token: string, name: string, inputs: Inputs[number][], outputs: Outputs[number][]) {
-        super(token, name, inputs, outputs);
+    protected constructor(inputs: Inputs, outputs: Outputs) {
+        super(inputs, outputs);
 
         this.origin = '';
         this.propagate = (input: ChainComponent<Inputs, Outputs>["inbound"]) => _.chain(outputs)
@@ -20,36 +22,80 @@ export default abstract class Dynamic<Inputs extends string[], Outputs extends s
             .value() as any;
     }
 
-    static async fetch<Input extends string[], Output extends string[]>(origin: string): Promise<(_this: Dynamic<Input, Output>) => PropagateFn<Input, Output>> {
+    static async fetch<Input extends string[], Output extends string[]>(origin: string): ReturnType<Input, Output> {
+        if (!origin)
+            return Promise.reject(null);
+
         const url = new URL(origin);
 
-        const body = url.protocol.startsWith('http') ? await fetch(url).then(res => res.text()) : ['javascript:', 'js:'].includes(url.protocol) ? url.pathname : '';
-        return new Function('ctx', body) as any;
+        if (['http:', 'https:'].includes(url.protocol))
+            return await import(origin) as any;
+
+        else if (['javascript:', 'js:'].includes(url.protocol))
+            return new Function(url.pathname)() as any;
+
+        throw `Invalid protocol ${url.protocol}`;
     }
 
-    static async load<Inputs extends string[], Outputs extends string[]>(data: ApiDynamicComponentDefinition): Promise<Dynamic<Inputs, Outputs>> {
-        const parsed = await Dynamic.fetch<Inputs, Outputs>(data.origin);
+    static async load<Inputs extends string[], Outputs extends string[]>(data: ApiDynamicComponentDefinition<Inputs, Outputs>): Promise<ComponentBuilder<Inputs, Outputs>> {
+        const {propagate, onActivate} = await Dynamic.fetch<Inputs, Outputs>(data.origin)
+            .catch(function (err) {
+                if (err)
+                    console.error(err);
 
-        return new class extends Dynamic<Inputs, Outputs> {
-            constructor(token: string, name: string, inputs: Inputs, outputs: Outputs) {
-                super(token, name, inputs, outputs);
-                this.propagate = parsed(this);
-                this.origin = data.origin;
+                return ({
+                    propagate: () => _.fromPairs(_.map(data.outputs, i => [i, false])) as any
+                }) as Awaited<ReturnType<Inputs, Outputs>>;
+            });
+
+        // @ts-expect-error ???
+        return class extends Dynamic<Inputs, Outputs> {
+            public static readonly component = data;
+
+            static new(): Dynamic<Inputs, Outputs> {
+                const component = new this(data.inputs, data.outputs);
+                return Object.assign(component, {
+                    origin: data.origin,
+                    propagate: typeof propagate == 'function' ? ((...args) => propagate.call(component, ...args)) as PropagateFn<Inputs, Outputs> : component.propagate,
+                    onActivate: typeof onActivate == 'function' ? (() => onActivate.call(component)) as typeof onActivate : component.onActivate
+                })
             }
-        }(data.token, data.name, data.inputs as Inputs, data.outputs as Outputs);
+        };
     }
 
-    export(): ApiDynamicComponentDefinition {
-        return {
-            type: 'Dynamic',
+    static fromFunction<Inputs extends string[], Outputs extends string[]>(token: string, name: string, inputs: Inputs, outputs: Outputs, dynamic: string | FunctionMap<Inputs, Outputs>): ComponentBuilder<Inputs, Outputs> {
+        // @ts-expect-error
+        return class extends Dynamic<Inputs, Outputs> {
+            private constructor(inputs: Inputs, outputs: Outputs) {
+                super(inputs, outputs);
 
-            token: this.token,
-            name: this.name,
+                const {
+                    origin,
+                    propagate,
+                    onActivate
+                } = (typeof dynamic == 'string' ? {origin: dynamic, ...new Function(dynamic).call(this)} : dynamic) as any;
 
-            origin: this.origin,
+                this.origin = origin;
 
-            inputs: this.inputLabels,
-            outputs: this.outputLabels,
+                if (typeof propagate == 'function')
+                    this.propagate = inputs => propagate.call(this, inputs);
+
+                if (typeof onActivate == 'function')
+                    this.onActivate = () => onActivate.call(this);
+            }
+
+            static component: ApiDynamicComponentDefinition<Inputs, Outputs> = {
+                type: "Dynamic",
+                origin: typeof dynamic == 'string' ? dynamic : dynamic.origin ?? 'js:return{}',
+                token,
+                name,
+                inputs,
+                outputs
+            }
+
+            static new() {
+                return new this(inputs, outputs);
+            }
         }
     }
 }

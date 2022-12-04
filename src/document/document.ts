@@ -1,15 +1,20 @@
 import _ from 'lodash';
 
-import type {ApiDocument, GenericComponent} from "../../core/api/resources";
+import type {ApiComponentDefinition, ApiDocument, GenericComponent} from "../../core/api/resources";
 import type ChainComponent from "../circuit/chaincomponent";
 import type {Wire} from "../chain-view/render/wire";
 import loadComponent from "./componentFactory";
 import {extension} from "./ext";
 
-export default class Document {
+export type ComponentBuilder<Inputs extends string[], Outputs extends string[]> = {
+    component: ApiComponentDefinition<Inputs, Outputs>,
+    ['new'](): ChainComponent<Inputs, Outputs>
+}
 
-    public readonly components: ChainComponent<any, any>[] = [];
-    public readonly apiComponent: GenericComponent[] = [];
+export default class Document {
+    protected readonly loaded: Record<string, ComponentBuilder<any, any>> = {};
+    public readonly circuit: ChainComponent<any, any>[] = [];
+    public readonly renderMap: GenericComponent[] = [];
     public readonly wires: Wire[] = [];
 
     constructor(public readonly token: string, private readonly apiDoc: ApiDocument) {
@@ -26,22 +31,36 @@ export default class Document {
         doc.apiDoc.circuitName = apiDoc.circuitName;
         doc.apiDoc.ownerEmail = apiDoc.ownerEmail;
 
-        // make list of components used in doc avail
-        const componentMap: Record<string, ChainComponent<any, any>> = _.fromPairs(await Promise.all(_.chain(apiDoc.components)
+        const componentMap: Record<string, ComponentBuilder<any, any>> = _.fromPairs(await Promise.all(_.chain(apiDoc.components)
             .entries()
             .map(async ([a, i]) => [a, await (typeof i == 'string' ?
                 loadComponent(i) :
                 (extension.api().getNamespace('circuit').getSymbol(i.type) as any).load(i))])
             .value()));
 
+        Object.assign(doc, {loaded: componentMap});
+
         for (const i of apiDoc.content) {
-            const component = componentMap[i.token];
+            const component = componentMap[i.token].new();
             if (!component)
                 throw new Error(`Component ${i.token} not found`);
 
-            doc.apiComponent.push(i);
-            doc.components.push(component);
+            doc.renderMap.push(i);
+            doc.circuit.push(component);
         }
+
+        for (const [a, i] of _.chain(apiDoc.content)
+            .entries()
+            .map(([a, i]) => [doc.circuit[Number(a)], i] as [typeof doc.circuit[number], typeof i])
+            .value())
+            for (const [component, connection] of _.chain(i.wires)
+                .entries()
+                .map(([a, i]) => [doc.circuit[Number(a)], i] as [typeof doc.circuit[number], typeof i])
+                .value())
+                for (const {inputIndex, outputIndex} of connection)
+                    component.addInput(a, a.outputLabels[outputIndex], component.inputLabels[inputIndex]);
+
+        doc.circuit.forEach(i => [...i.update()]);
 
         return doc;
     }
@@ -58,12 +77,10 @@ export default class Document {
     export(optimise: 'size' | 'offline' | 'compatibility' = 'compatibility'): ApiDocument {
         return {
             circuitName: this.apiDoc.circuitName,
-            components: _.chain((optimise == 'offline' ? this.components.map(i => i.export()) : this.apiComponent.map(i => i.token)) as any)
-                .map(i => [typeof i == 'string' ? i : i.token, i])
-                // .uniq()
-                .fromPairs()
+            components: _.chain(this.loaded)
+                .mapValues(i => ['size', 'compatibility'].includes(optimise) ? i.component.token : i.component)
                 .value(),
-            content: this.apiComponent,
+            content: this.renderMap,
             ownerEmail: this.apiDoc.ownerEmail
         }
     }

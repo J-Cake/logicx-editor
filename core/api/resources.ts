@@ -10,33 +10,30 @@ export interface GenericComponent {
     token: string,
     direction: 0 | 1 | 2 | 3,
     flip: boolean,
-    outputs: {
-        [terminal: string]: [number, string][] // [terminal: string]: [destId: number, destTerminal: string][]
-    }
     label: string,
     position: [number, number],
     wires: wires
 }
 
-export interface ApiComponentDefinition {
+export interface ApiComponentDefinition<Inputs extends string[], Outputs extends string[]> {
     type: string,
     name: string,
     token: string,
-    inputs: string[],
-    outputs: string[],
+    inputs: Inputs,
+    outputs: Outputs,
 }
 
-export interface ApiStatelessComponentDefinition extends ApiComponentDefinition {
+export interface ApiStatelessComponentDefinition<Inputs extends string[], Outputs extends string[]> extends ApiComponentDefinition<Inputs, Outputs> {
     type: 'Stateless',
-    truthTable: [input: { [input: string]: boolean }, output: { [output: string]: boolean }][]
+    truthTable: [input: { [input in Inputs[number]]: boolean }, output: { [output in Outputs[number]]: boolean }][]
 }
 
-export interface ApiStatefulComponentDefinition extends ApiComponentDefinition {
+export interface ApiStatefulComponentDefinition<Inputs extends string[], Outputs extends string[]> extends ApiComponentDefinition<Inputs, Outputs> {
     type: 'Stateful',
     children: ApiDocument['components'],
 }
 
-export interface ApiDynamicComponentDefinition extends ApiComponentDefinition {
+export interface ApiDynamicComponentDefinition<Inputs extends string[], Outputs extends string[]> extends ApiComponentDefinition<Inputs, Outputs> {
     type: 'Dynamic',
 
     origin: string,
@@ -46,6 +43,6 @@ export interface ApiDynamicComponentDefinition extends ApiComponentDefinition {
 export interface ApiDocument {
     circuitName: string,
     content: GenericComponent[],
-    components: { [token in string]: string | ApiComponentDefinition },
+    components: { [token in string]: string | ApiComponentDefinition<any, any> },
     ownerEmail: string,
 }

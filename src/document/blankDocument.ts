@@ -1,9 +1,8 @@
 import type ChainComponent from "../circuit/chaincomponent";
 import type Stateless from "../circuit/stateless";
-import type { TruthTable } from "../circuit/stateless";
 import type Dynamic from "../circuit/dynamic";
 
-import Document from "./document";
+import Document, {ComponentBuilder} from "./document";
 import {extension} from "./ext";
 
 export default class BlankDocument extends Document {
@@ -15,8 +14,12 @@ export default class BlankDocument extends Document {
             ownerEmail: '', // TODO: Get this from the API
         });
 
-        this.components.push(...BlankDocument.mkTmp());
-        this.apiComponent.push({
+        Object.assign(this, {loaded: BlankDocument.generateComponents()});
+
+        console.log(this);
+
+        this.circuit.push(...BlankDocument.mkTmp(this.loaded));
+        this.renderMap.push({
             direction: 0,
             flip: false,
             label: 'A',
@@ -29,7 +32,6 @@ export default class BlankDocument extends Document {
                     outputIndex: 0
                 }]
             },
-            outputs: {}
         }, {
             direction: 0,
             flip: false,
@@ -43,7 +45,6 @@ export default class BlankDocument extends Document {
                     outputIndex: 0
                 }]
             },
-            outputs: {}
         }, {
             direction: 0,
             flip: false,
@@ -57,7 +58,6 @@ export default class BlankDocument extends Document {
                     outputIndex: 0
                 }]
             },
-            outputs: {}
         }, {
             direction: 0,
             flip: false,
@@ -65,13 +65,12 @@ export default class BlankDocument extends Document {
             position: [4, 0],
             token: '$not',
             wires: {
-                3: [{
+                4: [{
                     coords: [],
                     inputIndex: 0,
                     outputIndex: 0
                 }]
             },
-            outputs: {}
         }, {
             direction: 0,
             flip: false,
@@ -79,66 +78,44 @@ export default class BlankDocument extends Document {
             position: [6, 0],
             token: '$output',
             wires: {},
-            outputs: {}
         });
 
-        this.components.map(i => [...(i as any).update()]);
+        this.circuit.map(i => [...(i as any).update()]);
     }
 
+    private static generateComponents(): Record<string, ComponentBuilder<any, any>> {
+        const stateless: typeof Stateless = extension.api().getNamespace('circuit').getSymbol('Stateless')!;
+        const dynamic: typeof Dynamic = extension.api().getNamespace('circuit').getSymbol('Dynamic')!;
 
-    private static mkTmp(): ChainComponent<any, any>[] {
-        const StatelessComponent: typeof Stateless = extension.api().getNamespace('circuit').getSymbol('Stateless')!;
-        const DynamicComponent: typeof Dynamic = extension.api().getNamespace('circuit').getSymbol('Dynamic')!;
-
-        const Input = class Input extends DynamicComponent<[], ['input']> {
-            private value: boolean = false;
-
-            constructor() {
-                super('$input', 'Input', [], ['input']);
-
-                this.propagate = _ => ({input: this.value});
-                this.origin = `js:return Object.assign(function(){return{input:ctx.value}},{onActivate:function(){ctx.value=!ctx.value;[...ctx.update()]}.bind(ctx)})`
-            }
-
-            onActivate() {
-                this.value = !this.value;
-                for (const _ of this.update()) ;
-            }
-        }
-        const And = class And extends StatelessComponent<['a', 'b'], ['and']> {
-            public readonly truthTable: TruthTable<['a', 'b'], ['and']> = [
+        return {
+            '$input': dynamic.fromFunction('$input', 'Input', [], ['input'], {
+                origin: `js:return { propagate() { return { input: this.value } }, onActivate() { this.value = !this.value } }`,
+                propagate(this: { value: boolean } & Dynamic<[], ['input']>) {
+                    return {input: this.value};
+                },
+                onActivate(this: { value: boolean } & Dynamic<[], ['input']>) {
+                    this.value = !this.value;
+                },
+            }),
+            '$and': stateless.fromTruthTable('$and', 'And', ['a', 'b'], ['and'], [
                 [{a: false, b: false}, {and: false}],
                 [{a: true, b: false}, {and: false}],
                 [{a: false, b: true}, {and: false}],
                 [{a: true, b: true}, {and: true}],
-            ];
-
-            constructor() {
-                super('$and', 'And', ['a', 'b'], ['and']);
-            }
-        }
-        const Not = class Not extends StatelessComponent<['q'], ['q\'']> {
-            public readonly truthTable: TruthTable<['q'], ['q\'']> = [
+            ]),
+            '$not': stateless.fromTruthTable('$not', 'Not', ['q'], ['q\''], [
                 [{q: false}, {'q\'': true}],
                 [{q: true}, {'q\'': false}],
-            ];
+            ]),
+            '$output': dynamic.fromFunction('$output', 'Output', ['output'], [], {})
+        } as const;
+    }
 
-            constructor() {
-                super('$not', 'Not', ['q'], ['q\'']);
-            }
-        }
-        const Output = class Output extends DynamicComponent<['output'], []> {
-            constructor() {
-                super('$output', 'Output', ['output'], []);
-
-                this.propagate = _ => ({});
-            }
-        }
-
-        const inputs = [new Input(), new Input()];
-        const and = new And();
-        const not = new Not();
-        const output = new Output();
+    private static mkTmp(loaded: Record<string, ComponentBuilder<any, any>>): ChainComponent<any, any>[] {
+        const inputs = [loaded['$input'].new(), loaded['$input'].new()];
+        const and = loaded['$and'].new();
+        const not = loaded['$not'].new();
+        const output = loaded['$output'].new();
 
         and.addInput(inputs[0], 'input', 'a');
         and.addInput(inputs[1], 'input', 'b');

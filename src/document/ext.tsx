@@ -1,4 +1,5 @@
 import React from 'react';
+import JSON5 from 'json5';
 
 import {Extension} from "../../core/ext/Extension";
 import {PanelHandle} from "../../core/ext/ViewportManager";
@@ -21,18 +22,16 @@ export default function (ctx: Extension<{}>) {
     ctx.action.register('save-to-disk', function () {
         const current: Document = ctx.api().getNamespace('circuit').getSymbol('get-current-document')!();
 
-        console.log(current);
-
         if (!current)
             return;
 
-        const doc = JSON.stringify(current.export('offline'), null, 4);
+        const doc = JSON5.stringify(current.export('offline'));
 
-        const blob = new Blob([doc], {type: 'application/json'});
+        const blob = new Blob([doc], {type: 'application/json5'});
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = current.name + '.json';
+        a.download = current.name + '.json5';
         a.click();
     });
 
@@ -43,7 +42,7 @@ export default function (ctx: Extension<{}>) {
             const file = input.files![0];
             const reader = new FileReader();
             reader.addEventListener('load', async function () {
-                const doc = await Document.load('', JSON.parse(reader.result as string));
+                const doc = await Document.load('', JSON5.parse(reader.result as string));
 
                 documentChangeHandlers.forEach(i => i(doc));
             });

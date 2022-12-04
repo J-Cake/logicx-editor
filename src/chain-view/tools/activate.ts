@@ -15,6 +15,7 @@ export default async function (extension: Extension<{}>) {
     const on = chain.getSymbol<RegisterHandler>('register-tool')?.('activate');
 
     on?.click(function(target) {
-        target['onActivate']();
+        target['onActivate']?.();
+        void [...target.update()];
     });
 }
