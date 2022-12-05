@@ -1,0 +1,23 @@
+{
+  "0 debug pnpm:scope": {
+    "selected": 1
+  },
+  "1 info pnpm": {
+    "err": {
+      "name": "Error",
+      "message": "not found: isntall",
+      "code": "ENOENT",
+      "stack": "Error: not found: isntall\n    at getNotFoundError (/home/jcake/.local/share/pnpm/global/5/.pnpm/pnpm@7.4.1/node_modules/pnpm/dist/pnpm.cjs:21148:51)\n    at Function.whichSync [as sync] (/home/jcake/.local/share/pnpm/global/5/.pnpm/pnpm@7.4.1/node_modules/pnpm/dist/pnpm.cjs:21225:13)\n    at getCommandAbsolutePathSync (/home/jcake/.local/share/pnpm/global/5/.pnpm/pnpm@7.4.1/node_modules/pnpm/dist/pnpm.cjs:22903:44)\n    at default_1 (/home/jcake/.local/share/pnpm/global/5/.pnpm/pnpm@7.4.1/node_modules/pnpm/dist/pnpm.cjs:22912:32)\n    at /home/jcake/.local/share/pnpm/global/5/.pnpm/pnpm@7.4.1/node_modules/pnpm/dist/pnpm.cjs:184702:39"
+    }
+  },
+  "2 error pnpm": {
+    "code": "ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL",
+    "prefix": "/home/jcake/Code/Completed/LogicX/app/editor",
+    "err": {
+      "name": "pnpm",
+      "message": "not found: isntall",
+      "code": "ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL",
+      "stack": "Error: not found: isntall\n    at getNotFoundError (/home/jcake/.local/share/pnpm/global/5/.pnpm/pnpm@7.4.1/node_modules/pnpm/dist/pnpm.cjs:21148:51)\n    at Function.whichSync [as sync] (/home/jcake/.local/share/pnpm/global/5/.pnpm/pnpm@7.4.1/node_modules/pnpm/dist/pnpm.cjs:21225:13)\n    at getCommandAbsolutePathSync (/home/jcake/.local/share/pnpm/global/5/.pnpm/pnpm@7.4.1/node_modules/pnpm/dist/pnpm.cjs:22903:44)\n    at default_1 (/home/jcake/.local/share/pnpm/global/5/.pnpm/pnpm@7.4.1/node_modules/pnpm/dist/pnpm.cjs:22912:32)\n    at /home/jcake/.local/share/pnpm/global/5/.pnpm/pnpm@7.4.1/node_modules/pnpm/dist/pnpm.cjs:184702:39"
+    }
+  }
+}

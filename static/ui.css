@@ -30,7 +30,7 @@ Any styles defined here are controlled by theme values.
 }
 
 /* common */
-.logicx-control, button, input {
+.logicx-control, .logicx-widget, button, input {
     display: block;
     position: relative;
     font: var(--theme-font-size) var(--theme-font-family);
@@ -102,4 +102,10 @@ button {
 .dropdown-option-list {
     padding: var(--theme-padding);
     border-bottom: var(--border);
+}
+
+.logicx-menu {
+    position: fixed;
+    background: var(--theme-background);
+    color: var(--theme-)
 }

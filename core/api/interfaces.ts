@@ -11,8 +11,6 @@ if (authToken.length <= 0)
 // This defines the host for the API endpoints. This allows local development versions under `localhost`. Note that IP-based access does not work, as you cannot use subdomains.
 export const API = window.localStorage.getItem('api-url') ?? `${window.location.protocol}//api.${window.location.host}`;
 
-console.log(API);
-
 interface Handler extends Record<Response.Action, (...x: any[]) => Promise<any>> {
     [Response.Action.Document_Read](authToken: string, documentToken: string): Promise<ApiDocument>;
 }

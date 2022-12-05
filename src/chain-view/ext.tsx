@@ -131,11 +131,11 @@ export default function Ext(extension: Extension<Storage>) {
     });
 
     extension.ui.viewport(function (parent) {
-        return <ViewportContainer>
-            <ToolBar position='top'>
-
-            </ToolBar>
-        </ViewportContainer>;
+        // return <ViewportContainer>
+        //     <ToolBar position='top'>
+        //
+        //     </ToolBar>
+        // </ViewportContainer>;
 
         return <section id="document-editor">
             <div className={`logicx-toolbar top`}>
