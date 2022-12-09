@@ -73,6 +73,16 @@
             ],
             run: "pnpm exec esbuild src/tree-view/ext.tsx --outfile=build/ext/tree-view.js  $esbuild_args --loader:.css=text"
         },
+        'build/ext/chain_add.js': {
+            dependencies: [
+                "src/chain-view/tools/add.tsx",
+                "build/ext/chain.js"
+            ],
+            run: [
+                "mkdir -p build/ext",
+                "pnpm exec esbuild src/chain-view/tools/add.tsx --outfile=build/ext/chain_add.js  $esbuild_args --loader:.css=text"
+            ]
+        },
         'build/ext/chain_select.js': {
             dependencies: [
                 "src/chain-view/tools/select.ts",

@@ -16,6 +16,12 @@
         "declarationDir": "build/lib",
         "strict": true,
         "importHelpers": true,
-        "skipLibCheck": true
+        "skipLibCheck": true,
+        "baseUrl": "./",
+        "paths": {
+            "#core": ["core/index.ts"],
+            "#core/*": ["core/*"],
+            "#components/*": ["ui/components/*"]
+        }
     }
 }

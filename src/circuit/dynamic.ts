@@ -1,7 +1,7 @@
 import _ from 'lodash';
 
 import ChainComponent from "./chaincomponent";
-import {ApiDynamicComponentDefinition} from "../../core/api/resources";
+import {ApiDynamicComponentDefinition} from "#core/api/resources";
 import {ComponentBuilder} from "../document/document";
 
 type PropagateFn<Inputs extends string[], Outputs extends string[]> = (input: ChainComponent<Inputs, Outputs>["inbound"]) => ChainComponent<Inputs, Outputs>["outbound"];

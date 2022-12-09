@@ -1,4 +1,4 @@
-import { Extension } from "../../../core/ext/Extension.js";
+import { Extension } from "#core/ext/Extension";
 
 import type ChainComponent from "../../circuit/chaincomponent.js";
 

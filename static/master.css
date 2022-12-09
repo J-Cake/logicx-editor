@@ -9,6 +9,22 @@ body {
     --panel-right-size: 256px;
 }
 
+:root {
+    --theme-background: #000;
+    --theme-foreground: #000;
+    --theme-primary: #000;
+    --theme-secondary: #000;
+    --theme-warn: #000;
+    --theme-danger: #000;
+    --theme-font-family: #000;
+    --theme-font-size: #000;
+    --theme-font-colour: #000;
+    --theme-border-radius: #000;
+    --theme-border-colour: #000;
+    --theme-border-weight: #000;
+    --theme-padding: #000;
+}
+
 body {
     background: var(--theme-background);
     color: var(--theme-font-colour);

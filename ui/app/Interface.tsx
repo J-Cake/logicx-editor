@@ -2,12 +2,12 @@ import $ from 'jquery';
 import React from "react";
 import _ from 'lodash';
 
+import {StateMgr} from "#core";
 import StatusBar from "./StatusBar";
 import ToolBar from "./ToolBar";
 import Viewport from "./Viewport";
 
 import * as Tab from '../components/tab';
-import {StateMgr} from "../../core";
 import StatusItem from "./private/status";
 
 export default class Interface extends React.Component<{ documentId: string }, { leftPanel: boolean, rightPanel: boolean, leftSize: number, rightSize: number }> {
@@ -36,7 +36,10 @@ export default class Interface extends React.Component<{ documentId: string }, {
         $(document.body).css('--panel-right-size', `${this.state.rightSize}px`);
     }
 
-    start = (e: React.MouseEvent, onResize: (size: number) => void) => (x => $(document.body).on('mousemove', x).on('mouseup', e => $(document.body).off('mousemove', x)))((e: JQuery.MouseMoveEvent) => this.onMove(e, onResize));
+    start = (e: React.MouseEvent, onResize: (size: number) => void) => (x => $(document.body)
+        .on('mousemove', x)
+        .on('mouseup', e => $(document.body)
+            .off('mousemove', x)))((e: JQuery.MouseMoveEvent) => this.onMove(e, onResize));
     onMove = (e: JQuery.MouseMoveEvent, onResize: (size: number) => void) => onResize(e.originalEvent?.movementX! ?? 0);
 
     render() {

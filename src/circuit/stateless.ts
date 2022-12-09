@@ -1,7 +1,7 @@
 import Lodash from 'lodash';
 
 import ChainComponent from "./chaincomponent";
-import {ApiStatelessComponentDefinition} from "../../core/api/resources";
+import {ApiStatelessComponentDefinition} from "#core/api/resources";
 import {ComponentBuilder} from "../document/document";
 
 export type TruthTable<Inputs extends string[], Outputs extends string[]> = [input: { [input in Inputs[number]]: boolean }, output: { [output in Outputs[number]]: boolean }][];

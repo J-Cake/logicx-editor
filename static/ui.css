@@ -48,15 +48,20 @@ Any styles defined here are controlled by theme values.
     padding: var(--theme-margin);
 }
 
-.checkbox .checkbox-inner {}
+.checkbox .checkbox-inner {
+}
 
-.radio {}
+.radio {
+}
 
-.radio .radio-inner {}
+.radio .radio-inner {
+}
 
-.single-line {}
+.single-line {
+}
 
-.multi-line {}
+.multi-line {
+}
 
 .tab {
     border-bottom: var(--border);
@@ -92,11 +97,11 @@ button {
 }
 
 .dropdown-expanded-options .dropdown-option:hover {
-    background: var(--theme-accent);
+    background: var(--theme-secondary);
 }
 
 .dropdown-expanded-options .dropdown-option:focus {
-    background: var(--theme-accent);
+    background: var(--theme-secondary);
 }
 
 .dropdown-option-list {
@@ -105,7 +110,62 @@ button {
 }
 
 .logicx-menu {
+    padding: 8px 0;
+
     position: fixed;
-    background: var(--theme-background);
-    color: var(--theme-)
+    backdrop-filter: brightness(60%) blur(10px);
+    color: var(--theme-font-colour);
+    font-size: calc(var(--theme-font-size) * 0.95);
+
+    top: 0;
+    left: 0;
+
+    border-radius: var(--theme-border-radius);
+}
+
+.logicx-menu .logicx-menuitem {
+    width: 100%;
+    display: flex;
+    padding: 4px 0;
+}
+
+.logicx-menu .logicx-menuitem:focus-within {
+    background: var(--theme-primary);
+    color: var(--theme-font-colour);
+}
+
+.logicx-menu .logicx-menuitem:hover:not(:focus-within) {
+    background: var(--theme-secondary);
+    color: var(--theme-font-colour);
+}
+
+.logicx-menu .logicx-menuitem :is(:nth-child(1), :nth-child(3)) {
+    text-align: center;
+}
+
+.logicx-menu .logicx-menuitem :is(:nth-child(1)) {
+    width: calc(var(--theme-font-size) * 2);
+}
+
+.logicx-menu .logicx-menuitem :is(:nth-child(3)) {
+    min-width: calc(var(--theme-font-size) * 2);
+}
+
+
+.logicx-menu .logicx-menuitem :nth-child(2) {
+    flex: 1;
+    min-width: 164px;
+
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.logicx-menu hr {
+    border: none;
+    border-bottom: 1px solid var(--theme-font-colour);
+    opacity: 0.5;
+}
+
+.logicx-menu :focus {
+    outline: none;
 }

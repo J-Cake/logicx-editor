@@ -16,13 +16,20 @@
     },
     "devDependencies": {
         "@j-cake/jcake-utils": "latest",
+        "@types/jquery": "latest",
         "@j-cake/mkjson": "latest",
         "@types/lodash": "latest",
         "@types/mousetrap": "latest",
         "@types/react": "latest",
         "@types/react-dom": "latest",
+        "@types/node": "latest",
         "chalk": "latest",
         "esbuild": "latest",
         "typescript": "latest"
+    },
+
+    "imports": {
+        "#core": "./core",
+        "#compoents": "./ui/components"
     }
 }

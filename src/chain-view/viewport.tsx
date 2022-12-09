@@ -1,6 +1,6 @@
 import React from 'react';
 
-import type { Extension } from '../../core/ext/Extension';
+import type { Extension } from '#core/ext/Extension';
 
 import type ChainComponent from '../circuit/chaincomponent';
 import type Document from "../document/document";
@@ -48,14 +48,14 @@ export class Viewport extends React.Component<ViewportProps, ViewportState> {
 
         StateMgr.on('transform', state => this.setState({ pan: state.pan, zoom: state.zoom }));
 
-        const onChange = this.props.extension.api().getNamespace('circuit').getSymbol<(handler: (doc: Document) => void) => void>('on-document-change');
+        const onChange = this.props.extension.api().getNamespace('document').getSymbol<(handler: (doc: Document) => void) => void>('on-document-change');
 
         if (onChange)
             onChange(doc => this.forceUpdate());
     }
 
     render() {
-        const doc = this.props.extension.api().getNamespace('circuit').getSymbol<() => Document>('get-current-document')?.() ?? null;
+        const doc = this.props.extension.api().getNamespace('document').getSymbol<() => Document>('get-current-document')?.() ?? null;
 
         if (doc) {
             const [x, y] = [Math.floor(this.state.pan[0]) + 0.5, Math.floor(this.state.pan[1]) + 0.5];
@@ -76,6 +76,7 @@ export class Viewport extends React.Component<ViewportProps, ViewportState> {
                         pos={doc!.renderMap[a].position}
                         selected={selected.has(i)}
                         chain={i}
+                        wires={doc?.renderMap[a].wires}
                         key={`input-${a}`} />)}
                     {doc.wires.map((i, a) => <Wire points={i.points} from={i.from} to={i.to}></Wire>)}
                 </g>

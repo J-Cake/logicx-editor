@@ -1,6 +1,6 @@
 import React from 'react';
 
-import type { Extension } from "../../core/ext/Extension";
+import type { Extension } from "#core/ext/Extension";
 
 export const name = "tree-view";
 

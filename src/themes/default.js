@@ -31,4 +31,8 @@ export default function (extension) {
                 border-color: ${extension.util.switchColour(theme.colours.foreground).stringify(false)} !important;
             }`]
     });
+
+    extension.ui.keymap('default', {
+        'shift+a': 'add-menu.add'
+    });
 }

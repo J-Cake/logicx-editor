@@ -1,8 +1,8 @@
 import React from 'react';
 import JSON5 from 'json5';
 
-import {Extension} from "../../core/ext/Extension";
-import {PanelHandle} from "../../core/ext/ViewportManager";
+import {Extension} from "#core/ext/Extension";
+import {PanelHandle} from "#core/ext/ViewportManager";
 
 import Document from './document';
 import BlankDocument from './blankDocument';
@@ -10,9 +10,20 @@ import Panel from './panel';
 
 export const name = 'document';
 
-export const extension: Extension<{}> = {} as any;
+export const extension: Extension<Storage> = {} as any;
+export interface Storage {
+    document?: Document,
+    docChangeListeners: Array<(doc: Document) => void>
+}
 
-export default function (ctx: Extension<{}>) {
+export function setActiveDocument(this: Extension<Storage>, doc: Document) {
+    this.storage().dispatch('switch-document', {
+        document: doc
+    });
+}
+
+export default function (ctx: Extension<Storage>) {
+    ctx.storage().setState({docChangeListeners: []});
     Object.assign(extension, ctx);
 
     ctx.action.register('save', function () {
@@ -20,7 +31,7 @@ export default function (ctx: Extension<{}>) {
     });
 
     ctx.action.register('save-to-disk', function () {
-        const current: Document = ctx.api().getNamespace('circuit').getSymbol('get-current-document')!();
+        const current: Document = ctx.api().getNamespace('document').getSymbol('get-current-document')!();
 
         if (!current)
             return;
@@ -41,24 +52,17 @@ export default function (ctx: Extension<{}>) {
         input.onchange = function () {
             const file = input.files![0];
             const reader = new FileReader();
-            reader.addEventListener('load', async function () {
-                const doc = await Document.load('', JSON5.parse(reader.result as string));
-
-                documentChangeHandlers.forEach(i => i(doc));
-            });
+            reader.addEventListener('load', async () => setActiveDocument.call(ctx, await Document.load('', JSON5.parse(reader.result as string))));
             reader.readAsText(file);
         };
         input.click();
     });
 
-    const documentChangeHandlers: Array<(document: Document) => void> = [];
+    ctx.action.register('new', () => setActiveDocument.call(ctx, new BlankDocument()));
+    ctx.api().expose('get-current-document', () => ctx.storage().get().document);
+    ctx.api().expose('on-document-change', (changeHandler: (doc: Document) => void) => ctx.storage().setState(prev => ({docChangeListeners: [...prev.docChangeListeners, changeHandler]})))
 
-    ctx.api().expose('on-request-document-change', (handler: (document: Document) => void) => documentChangeHandlers.push(doc => handler(doc)));
-    ctx.action.register('new', function () {
-        const doc = new BlankDocument();
-        for (const i of documentChangeHandlers)
-            i(doc);
-    });
+    ctx.storage().on('switch-document', state => state.docChangeListeners.forEach(i => i(state.document!)));
 
     ctx.ui.panel({label: 'Documents', icon: 'file', panel: 'left'}, (panel: PanelHandle) => <Panel ctx={ctx}/>);
 }

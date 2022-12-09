@@ -1,6 +1,6 @@
 import React from 'react';
 
-import type { ActionItem } from "../../core/ext/ViewportManager";
+import type { ActionItem } from "#core/ext/ViewportManager";
 
 export default function ToolButton(props: { action: ActionItem, onClick: () => void }) {
     return <button key={`toolbar-action-${props.action.name}`}

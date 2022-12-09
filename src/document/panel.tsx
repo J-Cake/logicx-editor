@@ -1,12 +1,13 @@
 import React from 'react';
 
-import { Extension } from "../../core/ext/Extension";
-import { ApiDocument } from "../../core/api/resources";
+import { Extension } from "#core/ext/Extension";
+import { ApiDocument } from "#core/api/resources";
 import ToolButton from '../../ui/components/toolbtn';
+import {Storage} from "./ext";
 
-export default class Panel extends React.Component<{ ctx: Extension<{}> }, { documents?: ApiDocument[] }> {
-    static ctx: Extension<{}>;
-    constructor(props: { ctx: Extension<{}> }) {
+export default class Panel extends React.Component<{ ctx: Extension<Storage> }, { documents?: ApiDocument[] }> {
+    static ctx: Extension<Storage>;
+    constructor(props: { ctx: Extension<Storage> }) {
         super(props);
         this.state = {};
     }

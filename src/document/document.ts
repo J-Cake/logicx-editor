@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-import type {ApiComponentDefinition, ApiDocument, GenericComponent} from "../../core/api/resources";
+import type {ApiComponentDefinition, ApiDocument, GenericComponent} from "#core/api/resources";
 import type ChainComponent from "../circuit/chaincomponent";
 import type {Wire} from "../chain-view/render/wire";
 import loadComponent from "./componentFactory";
@@ -12,7 +12,7 @@ export type ComponentBuilder<Inputs extends string[], Outputs extends string[]> 
 }
 
 export default class Document {
-    protected readonly loaded: Record<string, ComponentBuilder<any, any>> = {};
+    readonly loaded: Record<string, ComponentBuilder<any, any>> = {};
     public readonly circuit: ChainComponent<any, any>[] = [];
     public readonly renderMap: GenericComponent[] = [];
     public readonly wires: Wire[] = [];

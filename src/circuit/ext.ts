@@ -1,4 +1,4 @@
-import type { Extension } from "../../core/ext/Extension";
+import type { Extension } from "#core/ext/Extension";
 
 import type Document from "../document/document";
 
@@ -16,7 +16,7 @@ export default function main(ext: Extension<Storage>) {
     ext.api().expose('get-current-document', () => ext.storage().get().document);
     ext.api().expose('on-document-change', function (handler: (document: Document) => void) {
         const onChange = ext.api().getNamespace('document').getSymbol('on-request-document-change');
-        
+
         if (onChange)
             onChange(function (doc: Document) {
                 ext.storage().dispatch('document-change', { document: doc });

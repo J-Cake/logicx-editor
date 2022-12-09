@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { ActionItem } from '../../core/ext/ViewportManager';
+import { ActionItem } from '#core/ext/ViewportManager';
 import ToolBtn from './private/toolbtn';
 
 export default class ToolBar extends React.Component<{ children?: ActionItem[], position: 'top' | 'left' | 'right' }> {

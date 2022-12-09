@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { StateMgr } from "../../../core";
-import { ActionItem } from "../../../core/ext/ViewportManager";
+import { StateMgr } from "#core";
+import { ActionItem } from "#core/ext/ViewportManager";
 
 export default function ToolBtn(props: { action: ActionItem | string }) {
     try {

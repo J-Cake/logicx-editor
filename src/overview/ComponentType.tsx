@@ -25,7 +25,7 @@ const comp = {
 
 export function getComponents(): Nullable<{ stateless: Stateless<any, any>[], stateful: Stateful<any, any>[], dynamic: Dynamic<any, any>[] }> {
 
-    const components = (extension.api().getNamespace('circuit').getSymbol('get-current-document')() as Nullable<Document>)?.circuit;
+    const components = (extension.api().getNamespace('document').getSymbol('get-current-document')() as Nullable<Document>)?.circuit;
 
     const Stateless = comp.stateless ??= extension.api().getNamespace('circuit').getSymbol('Stateless')!;
     const Stateful = comp.stateful ??= extension.api().getNamespace('circuit').getSymbol('Stateful')!;

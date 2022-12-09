@@ -3,8 +3,8 @@ import React from 'react';
 import _ from 'lodash';
 
 // Core APIs
-import type { Extension } from '../../core/ext/Extension';
-import type { ActionItem } from '../../core/ext/ViewportManager';
+import type { Extension } from '#core/ext/Extension';
+import type { ActionItem } from '#core/ext/ViewportManager';
 import StateManager from '../../core/stateManager';
 
 // Isolated UI components
@@ -17,9 +17,6 @@ import type Document from "../document/document";
 
 // Local Imports
 import { ComponentUserAction, Viewport, Storage } from './viewport';
-import {TabView} from "../../ui/components/tab";
-import ViewportContainer from "../../ui/components/viewport-container";
-import ToolBar from "../../ui/app/ToolBar";
 
 export const name = 'chain-view';
 

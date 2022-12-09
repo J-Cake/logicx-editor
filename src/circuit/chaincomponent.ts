@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import {ApiComponentDefinition} from "../../core/api/resources";
+import {ApiComponentDefinition} from "#core/api/resources";
 import {ComponentBuilder} from "../document/document";
 
 export default abstract class ChainComponent<Inputs extends string[], Outputs extends string[]> {

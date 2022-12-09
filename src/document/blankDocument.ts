@@ -16,8 +16,6 @@ export default class BlankDocument extends Document {
 
         Object.assign(this, {loaded: BlankDocument.generateComponents()});
 
-        console.log(this);
-
         this.circuit.push(...BlankDocument.mkTmp(this.loaded));
         this.renderMap.push({
             direction: 0,

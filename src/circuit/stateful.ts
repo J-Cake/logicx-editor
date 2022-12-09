@@ -1,7 +1,7 @@
 import _ from 'lodash';
 
 import ChainComponent from "./chaincomponent";
-import {ApiStatefulComponentDefinition} from "../../core/api/resources";
+import {ApiStatefulComponentDefinition} from "#core/api/resources";
 import Dynamic from "./dynamic";
 import {ComponentBuilder} from "../document/document";
 
