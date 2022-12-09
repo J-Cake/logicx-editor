@@ -11,7 +11,6 @@ export type ActionTree = {
 };
 
 export class ActionNamespace {
-
     private readonly actions: { [name in string]: ActionItem & { action: () => void } };
     private children: { [name in string]: ActionNamespace };
 

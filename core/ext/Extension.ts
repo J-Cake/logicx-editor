@@ -4,6 +4,7 @@ import {ActionNamespace} from "./ActionManager";
 import ThemeManager, {Colour} from "./ThemeManager";
 import ViewportManager from "./ViewportManager";
 import {query} from "../api/interfaces";
+import KeymapManager from "#core/ext/KeymapManager";
 
 export interface ExtensionAPI<K extends Record<string, any>> {
     expose<T extends K[string]>(name: string, object: T): T,
@@ -35,7 +36,7 @@ export function extensionAPI<K extends Record<string, any>>(this: { name: string
     return getApiInterface(APIs[this.name] = new Map());
 }
 
-export interface Extension<T extends {} = any> {
+export interface Extension<Storage extends {} = any> {
     action: {
         invoke(name: string): void,
         getNamespace(): ActionNamespace,
@@ -49,6 +50,8 @@ export interface Extension<T extends {} = any> {
         viewport(viewport: (parent: JQuery) => JSX.Element, heading: string): void,
         panel: ViewportManager['addPanelItem'],
         theme: ThemeManager['pushTheme'],
+        menu: ViewportManager['menu'],
+        keymap: KeymapManager['registerKeymap']
     },
 
     util: {
@@ -58,7 +61,7 @@ export interface Extension<T extends {} = any> {
 
     resource: typeof query,
 
-    storage: () => StateManager<T>,
+    storage: () => StateManager<Storage>,
     api: <K extends Record<string, any>>() => ExtensionAPI<K>,
 
     currentTheme: <T>(path: string) => T
@@ -90,6 +93,8 @@ export default function Extension<T extends {} = any>(name: string, onLoad: (ext
             },
             panel: state.viewport.addPanelItem.bind(state.viewport),
             theme: state.themes.pushTheme.bind(state.themes),
+            menu: state.viewport.menu.bind(state.viewport),
+            keymap: state.keymap.registerKeymap.bind(state.keymap)
         },
 
         storage: () => storage()!,

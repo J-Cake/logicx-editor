@@ -1,8 +1,10 @@
 import ThemeManager, { Theme } from "./ThemeManager";
+import KeymapManager from "#core/ext/KeymapManager";
 
 export interface GlobalPreferences {
     extensions: string[],
     theme: keyof ThemeManager['themes'][string],
+    keymap: keyof KeymapManager['keymaps'][string]
     language: string,
     toolbarLeft: string[],
     toolbarRight: string[],
@@ -10,7 +12,6 @@ export interface GlobalPreferences {
 }
 
 export default class PreferenceManager<Preferences extends { [Pref in string]: any }> {
-
     private readonly preferences: Preferences = {} as Preferences;
 
     private constructor(private readonly defaultPreferences: Preferences) {

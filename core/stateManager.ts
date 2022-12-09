@@ -79,7 +79,7 @@ export default class StateManager<State extends {}> {
             delete this.eventHandlers[id];
     }
 
-    dispatch(event: string, state: Partial<State> | ((prev: State) => Partial<State>)): void {
+    dispatch(event: string, state: Partial<State> | ((prev: State) => Partial<State>)): State {
         if (state instanceof Function)
             this.setState(state(this.globState));
         else
@@ -89,6 +89,8 @@ export default class StateManager<State extends {}> {
 
         for (const i of events)
             i.callback(this.globState);
+
+        return this.globState;
     }
 
     broadcast(event: string): void {

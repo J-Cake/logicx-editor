@@ -1,4 +1,4 @@
-export type wires = {
+export type Wires = {
     [dest: number]: {
         coords: [number, number][],
         inputIndex: number,
@@ -12,7 +12,7 @@ export interface GenericComponent {
     flip: boolean,
     label: string,
     position: [number, number],
-    wires: wires
+    wires: Wires
 }
 
 export interface ApiComponentDefinition<Inputs extends string[], Outputs extends string[]> {
