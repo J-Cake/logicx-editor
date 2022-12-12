@@ -1,20 +1,28 @@
 import _ from 'lodash';
 
-import type {ApiComponentDefinition, ApiDocument, GenericComponent} from "#core/api/resources";
+import type {
+    ApiComponentDefinition,
+    ApiDocument,
+    ApiGenericComponent,
+    RenderComponentProps,
+    Wires
+} from "#core/api/resources";
 import type ChainComponent from "../circuit/chaincomponent";
 import type {Wire} from "../chain-view/render/wire";
 import loadComponent from "./componentFactory";
 import {extension} from "./ext";
+import {Point} from "../chain-view/vector";
 
 export type ComponentBuilder<Inputs extends string[], Outputs extends string[]> = {
     component: ApiComponentDefinition<Inputs, Outputs>,
     ['new'](): ChainComponent<Inputs, Outputs>
 }
 
+// TODO: Refactor to keep chain components inside the list of components
 export default class Document {
     readonly loaded: Record<string, ComponentBuilder<any, any>> = {};
     public readonly circuit: ChainComponent<any, any>[] = [];
-    public readonly renderMap: GenericComponent[] = [];
+    public readonly renderMap: RenderComponentProps[] = [];
     public readonly wires: Wire[] = [];
 
     constructor(public readonly token: string, private readonly apiDoc: ApiDocument) {
@@ -45,9 +53,30 @@ export default class Document {
             if (!component)
                 throw new Error(`Component ${i.token} not found`);
 
-            doc.renderMap.push(i);
             doc.circuit.push(component);
         }
+
+        const wire = (wire: RenderComponentProps['wires'][number]) => wire;
+
+        for (const [component, i] of apiDoc.content.entries())
+            doc.renderMap.push({
+                position: new Point(i.position[0], i.position[1]),
+                token: i.token,
+                chain: doc.circuit[component],
+                flip: i.flip,
+                direction: i.direction,
+                label: i.label,
+                wires: _.chain(i.wires)
+                    .entries()
+                    .map(([a, i]: [number, Wires[number]]) => i.map(j => wire({
+                        dest: doc.circuit[a],
+                        coords: j.coords.map(i => new Point(i[0], i[1])),
+                        input: doc.circuit[a].inputLabels[j.inputIndex],
+                        output: doc.circuit[component].outputLabels[j.outputIndex]
+                    })))
+                    .flatten()
+                    .value() as any
+            });
 
         for (const [a, i] of _.chain(apiDoc.content)
             .entries()
@@ -75,12 +104,39 @@ export default class Document {
     }
 
     export(optimise: 'size' | 'offline' | 'compatibility' = 'compatibility'): ApiDocument {
+        const gen = (comp: ApiGenericComponent) => comp;
+        const mkWire = (comp: ApiGenericComponent['wires'][number][number]) => comp;
+
         return {
             circuitName: this.apiDoc.circuitName,
             components: _.chain(this.loaded)
                 .mapValues(i => ['size', 'compatibility'].includes(optimise) ? i.component.token : i.component)
                 .value(),
-            content: this.renderMap,
+            content: _.chain(this.renderMap)
+                .map(i => gen({
+                    direction: i.direction,
+                    flip: i.flip,
+                    label: i.label,
+                    position: i.position.toTuple(),
+                    token: i.token,
+                    wires: _.chain(i.wires)
+                        .map(wire => ({
+                            dest: this.circuit.indexOf(wire.dest),
+                            ...mkWire({
+                                coords: [],
+                                inputIndex: 0,
+                                outputIndex: 0
+                            })
+                        }))
+                        .groupBy('dest')
+                        .mapValues(i => i.map(i => ({
+                            coords: i.coords,
+                            inputIndex: i.inputIndex,
+                            outputIndex: i.outputIndex,
+                        })))
+                        .value()
+                }))
+                .value(),
             ownerEmail: this.apiDoc.ownerEmail
         }
     }

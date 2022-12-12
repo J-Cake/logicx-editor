@@ -5,14 +5,18 @@ import { Colour } from '#core/ext/ThemeManager';
 import type ChainComponent from "../../circuit/chaincomponent";
 
 import { StateMgr } from '../ext';
+import {Point} from "../vector";
 
-export type Wire = {
-    points: [x: number, y: number][],
+export interface Wire {
+    points: Point[],
     from: [comp: ChainComponent<any[], any[]>, terminal: string],
     to: [comp: ChainComponent<any[], any[]>, terminal: string],
     input: [number, number],
-    output: [number, number]
-};
+    output: [number, number],
+
+    onSplice(event: React.MouseEvent<SVGPolylineElement, MouseEvent>): void
+}
+
 export default function RenderWire(props: Wire) {
     const { getValue } = StateMgr.get();
 
@@ -20,8 +24,9 @@ export default function RenderWire(props: Wire) {
     const base = getValue<Colour>('colours.foreground');
 
     return <polyline
+        onClick={e => props.onSplice(e)}
         stroke={props.from[0].outbound[props.from[1]] ? active!.stringify() : base!.stringify()}
-        points={toPath([...props.points], props.output, props.input)}/>
+        points={toPath(props.points.map(i => i.toTuple()), props.output, props.input)}/>
 }
 
 export function toPath(points: [x: number, y: number][], output: [number, number], input: [number, number]): string {

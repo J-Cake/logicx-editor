@@ -6,11 +6,12 @@ import type {Colour} from '#core/ext/ThemeManager';
 import type ChainComponent from '../../circuit/chaincomponent';
 
 import {StateMgr} from '../ext';
+import {Point} from "../vector";
 
 export interface ComponentProps {
     inputs: { [key in string]: boolean },
     outputs: { [key in string]: boolean },
-    pos: [number, number],
+    pos: Point,
     direction?: [dir: 0 | 90 | 180 | 270, flip?: boolean],
     label?: string,
     debugTarget?: boolean,

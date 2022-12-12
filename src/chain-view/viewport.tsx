@@ -13,8 +13,9 @@ import Wire from './render/wire';
 
 import {StateMgr} from './ext';
 import NoContents from "../../ui/components/no-contents";
-import {GenericComponent, Wires} from "#core/api/resources";
+import {ApiGenericComponent, RenderComponentProps, Wires} from "#core/api/resources";
 import RenderWire from "./render/wire";
+import {intersection, Point} from "./vector";
 
 export type ComponentUserAction =
     'click'
@@ -47,9 +48,9 @@ export interface ViewportState {
 }
 
 export interface WireObj {
-    dest: { chain: ChainComponent<any, any>, render: GenericComponent },
-    src: { chain: ChainComponent<any, any>, render: GenericComponent },
-    coords: [number, number][],
+    dest: { chain: ChainComponent<any, any>, render: ApiGenericComponent },
+    src: { chain: ChainComponent<any, any>, render: ApiGenericComponent },
+    coords: Point[],
     inputIndex: number, // is number because terminals may be unnamed
     outputIndex: number // number because null-name
 }
@@ -99,37 +100,54 @@ export class Viewport extends React.Component<ViewportProps, ViewportState> {
                         chain={i}
                         key={`input-${a}`}/>)}
 
-                    {_.chain(doc?.renderMap)
-                        .map((i, b) => _.chain(i?.wires as Wires)
-                            .entries()
-                            .map(([a, i]) => i.map(j => ({
-                                dest: {
-                                    chain: doc?.circuit[Number(a)],
-                                    render: doc?.renderMap[Number(a)]
-                                },
-                                src: {
-                                    chain: doc?.circuit[b],
-                                    render: doc?.renderMap[b]
-                                },
-                                coords: j.coords,
-                                inputIndex: j.inputIndex,
-                                outputIndex: j.outputIndex,
-                            }) as WireObj))
-                            .value() as WireObj[][])
-                        .flatten()
-                        .flatten()
-                        .map(function (i) {
-                            const dest = getPos(i.dest.render.position).map(i => i * gridSize);
-                            const src = [...getPos(i.src.render.position), 1].map(i => i * gridSize);
+                    {/*{_.chain(doc?.renderMap)*/}
+                    {/*    .map((i, b) => _.chain(i?.wires as RenderComponentProps['wires'])*/}
+                    {/*        .entries()*/}
+                    {/*        .map(([a, i]) => i.map(j => ({*/}
+                    {/*            dest: {*/}
+                    {/*                chain: doc?.circuit[Number(a)],*/}
+                    {/*                render: doc?.renderMap[Number(a)]*/}
+                    {/*            },*/}
+                    {/*            src: {*/}
+                    {/*                chain: doc?.circuit[b],*/}
+                    {/*                render: doc?.renderMap[b]*/}
+                    {/*            },*/}
+                    {/*            coords: j.coords,*/}
+                    {/*            inputIndex: j.inputIndex,*/}
+                    {/*            outputIndex: j.outputIndex,*/}
+                    {/*        })))*/}
+                    {/*        .value())*/}
+                    {/*    .flatten()*/}
+                    {/*    .flatten()*/}
+                    {/*    .map(function (i) {*/}
+                    {/*        const dest = getPos(i.dest.render.position).map(i => i * gridSize);*/}
+                    {/*        const src = [...getPos(i.src.render.position), 1].map(i => i * gridSize);*/}
 
-                            return <RenderWire
-                                points={i.coords}
-                                input={[dest[0], dest[1] + gridSize * i.inputIndex + Math.floor(gridSize / 2)]}
-                                output={[src[0] + src[2], src[1] + gridSize * i.outputIndex + Math.floor(gridSize / 2)]}
-                                from={[i.src.chain, i.src.chain.outputLabels[i.outputIndex]]}
-                                to={[i.dest.chain, i.dest.chain.inputLabels[i.inputIndex]]}/>;
-                        })
-                        .value()}
+                    {/*        const output = new Point(src[0] + src[2], src[1] + gridSize * i.outputIndex + Math.floor(gridSize / 2));*/}
+                    {/*        const input = new Point(dest[0], dest[1] + gridSize * i.inputIndex + Math.floor(gridSize / 2));*/}
+
+                    {/*        const splice = function (coords: { x: number, y: number }) {*/}
+                    {/*            const points = [output, i.coords, input];*/}
+
+                    {/*            console.log(points);*/}
+
+                    {/*            console.log("Splicing at", points.slice(1).find(function (i, a) {*/}
+                    {/*                const slice = [points[a], i] as [Point, Point];*/}
+
+                    {/*                if (intersection(slice, new Point(coords.x, coords.y), gridSize / 4))*/}
+                    {/*                    return true;*/}
+                    {/*            }));*/}
+                    {/*        }*/}
+
+                    {/*        return <RenderWire*/}
+                    {/*            onSplice={e => splice({x: e.clientX, y: e.clientY})}*/}
+                    {/*            points={i.coords}*/}
+                    {/*            input={input.toTuple()}*/}
+                    {/*            output={output.toTuple()}*/}
+                    {/*            from={[i.src.chain, i.src.chain.outputLabels[i.outputIndex]]}*/}
+                    {/*            to={[i.dest.chain, i.dest.chain.inputLabels[i.inputIndex]]}/>;*/}
+                    {/*    })*/}
+                    {/*    .value()}*/}
                 </g>
             </svg>;
         } else
