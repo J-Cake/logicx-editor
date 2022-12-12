@@ -1,8 +1,8 @@
 export type Wires = {
-    [dest: number]: {
-        coords: [number, number][],
-        inputIndex: number,
-        outputIndex: number
+    [dest: number]: { // The index of the component in the doc
+        coords: [number, number][], // A list of vertices (excluding start and end points)
+        inputIndex: number, // the index of the terminal on the connecting component
+        outputIndex: number // the index of the terminal on the current component
     }[]
 };
 

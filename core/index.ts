@@ -46,6 +46,8 @@ viewport.setState({
 
 state.keymap.loadKeymap(StateMgr.get().preferences.get('keymap'));
 
+export const getGlobalContext = () => StateMgr.get();
+
 setTimeout(() => StateMgr.broadcast('ready'), 0);
 
 StateMgr.on('ready', () => app($("section#root")[0]));

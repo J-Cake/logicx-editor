@@ -2,18 +2,15 @@ import React from 'react';
 import {chain as _} from 'lodash';
 
 import type {Colour} from '#core/ext/ThemeManager';
-import {Wires} from "#core/api/resources";
 
 import type ChainComponent from '../../circuit/chaincomponent';
 
 import {StateMgr} from '../ext';
-import RenderWire from "./wire";
 
 export interface ComponentProps {
     inputs: { [key in string]: boolean },
     outputs: { [key in string]: boolean },
     pos: [number, number],
-    wires: Wires,
     direction?: [dir: 0 | 90 | 180 | 270, flip?: boolean],
     label?: string,
     debugTarget?: boolean,
@@ -29,7 +26,11 @@ export function getPos(pos: [x: number, y: number]): [x: number, y: number] {
     const state = StateMgr.get();
 
     if (state.snap)
-        return [Math.floor(pos[0] / state.gridSize) * state.gridSize, Math.floor(pos[1] / state.gridSize) * state.gridSize];
+        return [
+            Math.floor(pos[0] / state.gridSize) * state.gridSize,
+            Math.floor(pos[1] / state.gridSize) * state.gridSize
+        ];
+
     else return pos;
 }
 
@@ -73,36 +74,23 @@ export default function RenderComponent(props: ComponentProps): JSX.Element {
 
     return <g stroke={base?.stringify()} strokeWidth='1' fill={background?.stringify()}
               onClick={() => extStorage.get().emitEvent('click', props.chain)}>
-        <rect x={pos.x} y={pos.y} width={pos.width} height={pos.height}>
+        <g>
+            <rect x={pos.x} y={pos.y} width={pos.width} height={pos.height}>
 
-            {props.label && <text x={pos.x + pos.width / 2} y={pos.y + pos.height / 2} textAnchor='middle'
-                                  dominantBaseline='middle'>
-                {props.label}
-            </text>}
+                {props.label && <text x={pos.x + pos.width / 2} y={pos.y + pos.height / 2} textAnchor='middle'
+                                      dominantBaseline='middle'>
+                    {props.label}
+                </text>}
+            </rect>
+        </g>
 
-        </rect>
-
-        {_(props.inputs).entries().map(([, isActive], a) => <polyline key={`input-term-${a}`}
-                                                                      stroke={isActive ? active!.stringify() : base!.stringify()}
-                                                                      points={input(a)}/>).value()}
-        {_(props.outputs).entries().map(([, isActive], a) => <polyline key={`output-term-${a}`}
-                                                                       stroke={isActive ? active!.stringify() : base!.stringify()}
-                                                                       points={output(a)}/>).value()}
-
-        {_(props.wires)
-            .entries()
-            .map(([a, i]) => i.map(j => <RenderWire
-                from={[props.chain, props.chain.outputLabels[j.outputIndex]]}
-                points={j.coords}
-                to={props.chain.inputMap[props.chain.inputLabels[j.inputIndex]]}/>))
-            .flatten()
-            .value()}
-
-        {/*{props.inputs.map((i, a) => <polyline key={`input-term-${a}`}*/}
-        {/*                                      stroke={i[0] ? active!.stringify() : base!.stringify()}*/}
-        {/*                                      points={input(a)}/>)}*/}
-        {/*{props.outputs.map((i, a) => <polyline key={`output-term-${a}`}*/}
-        {/*                                       stroke={i[0] ? active!.stringify() : base!.stringify()}*/}
-        {/*                                       points={output(a)}/>)}L*/}
+        <g>
+            {_(props.inputs).entries().map(([, isActive], a) => <polyline key={`input-term-${a}`}
+                                                                          stroke={isActive ? active!.stringify() : base!.stringify()}
+                                                                          points={input(a)}/>).value()}
+            {_(props.outputs).entries().map(([, isActive], a) => <polyline key={`output-term-${a}`}
+                                                                           stroke={isActive ? active!.stringify() : base!.stringify()}
+                                                                           points={output(a)}/>).value()}
+        </g>
     </g>;
 }
